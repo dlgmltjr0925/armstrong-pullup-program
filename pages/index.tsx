@@ -1,15 +1,46 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import { useMemo, useState } from 'react';
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-    </p>
-  </Layout>
-)
+import Friday from '../components/Friday';
+import Holiday from '../components/Holiday';
+import Layout from '../components/Layout';
+import Link from 'next/link';
+import Monday from '../components/Monday';
+import Thursday from '../components/Thursday';
+import Tuesday from '../components/Tuesday';
+import Wednesday from '../components/Wednesday';
 
-export default IndexPage
+const week = ['일', '월', '화', '수', '목', '금', '토'];
+
+const TodayPage = () => {
+  const [now, setNow] = useState<Date>(new Date());
+
+  const [day, setDay] = useState<number>(now.getDay());
+  // const [day] = useState<number>(1);
+
+  const WeekComponent = useMemo(() => {
+    switch (day) {
+      case 1:
+        return Monday;
+      case 2:
+        return Tuesday;
+      case 3:
+        return Wednesday;
+      case 4:
+        return Thursday;
+      case 5:
+        return Friday;
+      default:
+        return Holiday;
+    }
+  }, [day]);
+
+  return (
+    <Layout title='Today'>
+      <button onClick={() => setDay(day === 0 ? 6 : day - 1)}>이전</button>
+      <button onClick={() => setDay(day === 6 ? 0 : day + 1)}>다음</button>
+      <WeekComponent />
+    </Layout>
+  );
+};
+
+export default TodayPage;
