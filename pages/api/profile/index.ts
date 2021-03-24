@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
-import { getAllProfiles } from '../../../utils/profile';
+import { getAllProfiles, insertProfile } from '../../../utils/profile';
 
 const handler = (_req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -8,6 +7,12 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
       const profiles = getAllProfiles();
       res.status(200).json({
         profiles,
+      });
+    } else if (_req.method === 'POST') {
+      const { nickname } = _req.body;
+      const profile = insertProfile(nickname);
+      res.status(200).json({
+        profile,
       });
     }
   } catch (err) {

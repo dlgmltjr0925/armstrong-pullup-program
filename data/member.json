@@ -1,9 +1,1 @@
-{
-  "increment": 1,
-  "data": [
-    {
-      "id": 1,
-      "nickname": "test1"
-    }
-  ]
-}
+{"increment":4,"data":[{"id":1,"nickname":"test1"},{"id":2,"nickname":"test2"},{"id":3,"nickname":"test3"},{"id":4,"nickname":"test4"}]}
