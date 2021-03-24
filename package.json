@@ -8,6 +8,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "dateformat": "^4.5.1",
     "next": "latest",
     "next-redux-wrapper": "^6.0.2",

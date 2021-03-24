@@ -1,17 +1,26 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Friday from '../components/Friday';
 import Holiday from '../components/Holiday';
 import Layout from '../components/Layout';
-import Link from 'next/link';
+import { MemberState } from '../reducers/member';
 import Monday from '../components/Monday';
 import Thursday from '../components/Thursday';
 import Tuesday from '../components/Tuesday';
 import Wednesday from '../components/Wednesday';
-
-const week = ['일', '월', '화', '수', '목', '금', '토'];
+import { useRouter } from 'next/dist/client/router';
+import { useSelector } from 'react-redux';
 
 const TodayPage = () => {
+  const router = useRouter();
+  const member = useSelector(({ member }: { member: MemberState }) => member);
+
+  useEffect(() => {
+    if (member.id === 0) router.replace('/login');
+  }, [member.id]);
+
+  if (member.id === 0) return null;
+
   const [now, setNow] = useState<Date>(new Date());
 
   const [day, setDay] = useState<number>(now.getDay());

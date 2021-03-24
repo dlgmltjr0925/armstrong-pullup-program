@@ -4,7 +4,12 @@
 //
 // import { User } from 'path/to/interfaces';
 
-export type User = {
-  id: number
-  name: string
+export interface Member {
+  id: number;
+  nickname: string;
+}
+
+export interface Data<T> {
+  increment: number;
+  data: T[];
 }
