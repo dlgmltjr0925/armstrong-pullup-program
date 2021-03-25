@@ -66,3 +66,17 @@ export const insertProfile = (nickname: string): Member => {
     throw error;
   }
 };
+
+export const deleteProfile = (id: number): Member | null => {
+  try {
+    const memberData = getMemberData();
+    const member = memberData.data.find((member) => member.id === id);
+
+    if (!member) return null;
+    memberData.data = memberData.data.filter((member) => member.id !== id);
+    save(memberData);
+    return member;
+  } catch (error) {
+    throw error;
+  }
+};

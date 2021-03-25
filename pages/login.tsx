@@ -2,13 +2,20 @@ import { useCallback, useEffect, useState } from 'react';
 
 import Layout from '../components/Layout';
 import { Member } from '../interfaces';
+import { MemberActionType } from '../reducers/member';
+import MemberItem from '../components/MemberItem';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/dist/client/router';
 
 interface LoginPageProps {
   profiles?: Member[];
 }
 
 const LoginPage = ({ ...props }: LoginPageProps) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const [profiles, setProfiles] = useState<Member[]>([]);
 
   const [nickname, setNickname] = useState<string>('');
@@ -16,19 +23,6 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
   const handleChangeNickname = (e: any) => {
     setNickname(e.target.value);
   };
-
-  const handleClickAdd = useCallback(async () => {
-    try {
-      const res = await axios.post('/api/profile', { nickname });
-      if (res && res.data) {
-        const { profile } = res.data;
-        setProfiles([...profiles, profile]);
-        setNickname('');
-      }
-    } catch (error) {
-      throw error;
-    }
-  }, [nickname]);
 
   const getProfiles = useCallback(async () => {
     try {
@@ -42,6 +36,43 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
     }
   }, []);
 
+  const handleClickAdd = useCallback(async () => {
+    if (nickname.trim() === '') return;
+    try {
+      const res = await axios.post('/api/profile', { nickname });
+      if (res && res.data) {
+        const { profile } = res.data;
+        setProfiles([...profiles, profile]);
+        setNickname('');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }, [nickname]);
+
+  const handleClickDelete = useCallback(
+    async (id: number) => {
+      try {
+        const res = await axios.delete(`/api/profile/${id}`);
+        if (res.status === 200 || res.status === 400) {
+          console.log();
+          setProfiles(profiles.filter((profile) => profile.id !== id));
+        }
+      } catch (error) {
+        throw error;
+      }
+    },
+    [profiles]
+  );
+
+  const handleClickProfile = useCallback((profile: Member) => {
+    dispatch({
+      type: MemberActionType.SIGN_IN,
+      payload: profile,
+    });
+    router.replace('/');
+  }, []);
+
   useEffect(() => {
     if (!props.profiles) getProfiles();
   }, []);
@@ -50,7 +81,14 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
     <Layout title='Login'>
       <div>
         {profiles.map((profile) => {
-          return <div key={`${profile.id}`}>{profile.nickname}</div>;
+          return (
+            <MemberItem
+              key={`${profile.id}`}
+              profile={profile}
+              onClickProfile={handleClickProfile}
+              onClickDelete={handleClickDelete}
+            />
+          );
         })}
       </div>
       {profiles.length < 4 && (
