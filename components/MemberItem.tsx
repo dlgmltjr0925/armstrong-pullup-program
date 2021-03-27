@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 interface MemberItemProps {
   profile: Member;
-  onClickProfile: (id: number) => void;
+  onClickProfile: (profile: Member) => void;
   onClickDelete: (id: number) => void;
 }
 
@@ -14,7 +14,7 @@ const MemberItem = ({
 }: MemberItemProps) => {
   const handleClickProfile = useCallback(() => {
     try {
-      onClickProfile(profile.id);
+      onClickProfile(profile);
     } catch (error) {
       throw error;
     }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Friday from '../components/Friday';
 import Holiday from '../components/Holiday';
@@ -8,6 +8,7 @@ import Monday from '../components/Monday';
 import Thursday from '../components/Thursday';
 import Tuesday from '../components/Tuesday';
 import Wednesday from '../components/Wednesday';
+import dateFormat from 'dateformat';
 import { useRouter } from 'next/dist/client/router';
 import { useSelector } from 'react-redux';
 
@@ -21,13 +22,24 @@ const TodayPage = () => {
 
   if (member.id === 0) return null;
 
-  const [now, setNow] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date>(new Date());
 
-  const [day, setDay] = useState<number>(now.getDay());
-  // const [day] = useState<number>(1);
+  const handleClickPrev = useCallback(() => {
+    const prevDate = new Date(date);
+    prevDate.setDate(prevDate.getDate() - 1);
+    setDate(prevDate);
+  }, [date]);
+
+  const handleClickNext = useCallback(() => {
+    const nextDate = new Date(date);
+    nextDate.setDate(nextDate.getDate() + 1);
+    setDate(nextDate);
+  }, [date]);
+
+  const dayOfWeek = useMemo(() => date.getDay(), [date]);
 
   const WeekComponent = useMemo(() => {
-    switch (day) {
+    switch (dayOfWeek) {
       case 1:
         return Monday;
       case 2:
@@ -41,13 +53,14 @@ const TodayPage = () => {
       default:
         return Holiday;
     }
-  }, [day]);
+  }, [dayOfWeek]);
 
   return (
     <Layout title='Today'>
-      <button onClick={() => setDay(day === 0 ? 6 : day - 1)}>이전</button>
-      <button onClick={() => setDay(day === 6 ? 0 : day + 1)}>다음</button>
-      <WeekComponent />
+      <button onClick={handleClickPrev}>Prev</button>
+      <span>{dateFormat(date, 'yyyy. mm. dd')}</span>
+      <button onClick={handleClickNext}>Next</button>
+      <WeekComponent date={date} />
     </Layout>
   );
 };
