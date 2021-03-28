@@ -5,12 +5,14 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
   const memberId = _req.query.memberId as string;
   try {
     if (_req.method === 'POST') {
-      const record = insertRecord({
+      const result = insertRecord({
         memberId: parseInt(memberId, 10),
         ..._req.body.record,
       });
-      if (record === null) return res.status(400).json({});
-      res.status(200).json({ record });
+      if (typeof result === 'number') {
+        return res.status(202).json({ id: result })
+      }
+      res.status(200).json({ record: result });
     } else if (_req.method === 'PUT') {
       const record = updateRecord({
         memberId: parseInt(memberId, 10),

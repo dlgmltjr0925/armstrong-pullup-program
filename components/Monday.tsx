@@ -7,27 +7,31 @@ import axios from 'axios';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
 
+interface MondayRecord {
+  id?: number;
+  count: number;
+  isDone: boolean;
+  isSaved: boolean;
+}
+
 interface MondayProps {
   date: Date;
 }
 
 const REST_TIME = 90; // 90s
 
+const initialRecords = Array.from({ length: 5 }, () => ({
+  count: 0,
+  isDone: false,
+  isSaved: false,
+}))
+
 const Monday = ({ date }: MondayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
-  const [counts, setCounts] = useState(
-    Array.from({ length: 5 }, () => ({
-      prev: 0,
-      current: 0,
-      isDone: false,
-      isSaved: false,
-    }))
-  );
+  const [records, setRecords] = useState<MondayRecord[]>(initialRecords);
 
-  const currentSet = useMemo(() => counts.findIndex(({ isDone }) => !isDone), [
-    counts,
-  ]);
+  const currentOrder = useMemo(() => records.findIndex(({ isDone }) => !isDone), [records]);
 
   const handleClickReady = useCallback(() => {
     setStatus('EXERCISING');
@@ -37,8 +41,30 @@ const Monday = ({ date }: MondayProps) => {
     setStatus('REST');
   }, []);
 
+  const handleEndTimer = useCallback(async () => {
+    const newRecords = [...records];
+    newRecords[currentOrder].isDone = true;
+    setRecords(newRecords);
+    const index = newRecords.findIndex(({ isDone }) => !isDone);
+    if (index === -1) {
+      setStatus('COMPLETE');
+    } else {
+      setStatus('EXERCISING');
+    }
+  }, [currentOrder, records]);
+
+  const handleChangeCount = useCallback(
+    async (e) => {
+      const count = parseInt(e.target.value, 10);
+      const newRecords = [...records];
+      newRecords[currentOrder].count = isNaN(count) ? 0 : count;
+      setRecords(newRecords);
+    },
+    [currentOrder, records]
+  );
+
   const getRecords = useCallback(async () => {
-    const newCounts = [...counts];
+    const newRecords = [...records];
     try {
       const lastWeekDate = new Date(date);
       lastWeekDate.setDate(lastWeekDate.getDate() - 7);
@@ -47,10 +73,9 @@ const Monday = ({ date }: MondayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        records.forEach(({ set, count }: Record) => {
-          const index = set - 1;
-          newCounts[index].prev = count;
-          newCounts[index].current = count;
+        records.forEach(({ order, count }: Record) => {
+          const index = order - 1;
+          newRecords[index].count = count;
         });
       }
 
@@ -59,72 +84,82 @@ const Monday = ({ date }: MondayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        records.forEach(({ set, count }: Record) => {
-          const index = set - 1;
-          newCounts[index].current = count;
-          newCounts[index].isDone = true;
-          newCounts[index].isSaved = true;
+        records.forEach(({ order, count }: Record) => {
+          const index = order - 1;
+          newRecords[index].count = count;
+          newRecords[index].isDone = true;
+          newRecords[index].isSaved = true;
         });
         if (records.length === 5) setStatus('COMPLETE');
         else if (records.length > 0) setStatus('EXERCISING');
       }
 
-      setCounts(newCounts);
+      setRecords(newRecords);
     } catch (error) {
       throw error;
     }
-  }, [member, date, counts]);
+  }, [member, date, records]);
 
-  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>) => {
+  const updateRecord = useCallback(async (record: Record): Promise<Record | void> => {
     try {
-      const res = await axios.post(`/api/record/${member.id}`, {
-        record,
-      });
-      return res && res.status === 200;
+      const res = await axios.put(`/api/record/${member.id}`, { record });
+      if (res && res.status === 200) {
+        return res.data.record
+      }
     } catch (error) {
       throw error;
     }
-  }, []);
+  }, [member])
 
-  const handleEndTimer = useCallback(async () => {
-    const newCounts = [...counts];
-    newCounts[currentSet].isDone = true;
-    const index = newCounts.findIndex(({ isDone }) => !isDone);
-    setCounts(newCounts);
-    if (index === -1) {
-      setStatus('COMPLETE');
-    } else {
-      setStatus('EXERCISING');
+  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>): Promise<Record | void> => {
+    try {
+      const res = await axios.post(`/api/record/${member.id}`, { record });
+      if (res && res.status === 200) {
+        return res.data.record;
+      } else if (res && res.status === 202) {
+        const { id } = res.data;
+        return await updateRecord({ ...record, id }) as Record
+      }
+    } catch (error) {
+      throw error;
     }
-  }, [currentSet, counts]);
+  }, [member]);
 
-  const handleChangeCount = useCallback(
-    async (e) => {
-      const count = parseInt(e.target.value, 10);
-      const newCounts = [...counts];
-      newCounts[currentSet].current = isNaN(count) ? 0 : count;
-      setCounts(newCounts);
-    },
-    [currentSet, counts]
-  );
-
-  useEffect(() => {
-    if (currentSet === 0) return;
-    const index = currentSet === -1 ? 4 : currentSet - 1;
-    const prevSetCount = counts[index];
-    if (prevSetCount.isDone && !prevSetCount.isSaved) {
-      try {
-        enrollRecord({
+  const sync = useCallback(async () => {
+    try {
+      const index = records.findIndex(({ isDone, isSaved }) => isDone && !isSaved);
+      if (index === -1) return;
+      Promise.all(records.map(async ({ id, count, isDone, isSaved }, index) => {
+        if (!isDone || isSaved) return null;
+        const newRecord: Omit<Record, 'id'> = {
           date: dateFormat(date, 'yyyymmdd'),
           type: 'MAX_COUNT',
-          count: prevSetCount.current,
-          set: index + 1,
-        });
-      } catch (error) {
-        console.error(error);
-      }
+          count,
+          order: index + 1
+        }
+        if (id) {
+          return await updateRecord({ ...newRecord, id })
+        } else {
+          return await enrollRecord(newRecord)
+        }
+      })).then(results => {
+        let willBeUpdate = false;
+        const newRecords = [...records];
+        results.forEach((result, index) => {
+          if (result === null) return;
+          if (!willBeUpdate) willBeUpdate = true;
+          newRecords[index].isSaved = true;
+        })
+        if (willBeUpdate) setRecords(newRecords)
+      })
+    } catch (error) {
+      throw error;
     }
-  }, [currentSet]);
+  }, [records, updateRecord, enrollRecord])
+
+  useEffect(() => {
+    sync()
+  }, [records]);
 
   useEffect(() => {
     getRecords();
@@ -134,10 +169,10 @@ const Monday = ({ date }: MondayProps) => {
     <div>
       <PushUp date={date} />
       <p>Max 5 Set </p>
-      {counts.map(({ current, isDone, isSaved }, index) => {
+      {records.map(({ count, isDone, isSaved }, index) => {
         return !isDone ? null : (
           <div key={index}>
-            <span>{current}</span>
+            <span>{count}</span>
             {isSaved && <span>saved</span>}
           </div>
         );
@@ -157,7 +192,7 @@ const Monday = ({ date }: MondayProps) => {
             <input
               type='text'
               pattern='\d*'
-              value={counts[currentSet].current}
+              value={records[currentOrder].count}
               onChange={handleChangeCount}
             />
           </p>

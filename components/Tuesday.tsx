@@ -112,7 +112,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
           date: dateFormat(date, 'yyyymmdd'),
           type: 'MAX_COUNT',
           count: prevSetCount.current,
-          set: index + 1,
+          order: index + 1,
         });
       } catch (error) {
         console.error(error);

@@ -19,7 +19,7 @@ export interface Record {
   date: string; // 20210326
   type: 'PUSH_UP' | 'MAX_COUNT' | 'PYRAMID' | 'THREE_GRIP' | 'MAX_SET';
   count: number;
-  set: number;
+  order: number;
 }
 
 export type Status = 'READY' | 'EXERCISING' | 'REST' | 'COMPLETE';

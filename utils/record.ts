@@ -70,13 +70,13 @@ export const findRecordByDate = ({
 export const insertRecord = ({
   memberId,
   ...record
-}: InsertRecordInput): Record | null => {
+}: InsertRecordInput): Record | number => {
   try {
     const recordData = getRecordData(memberId);
     const index = recordData.data.findIndex(
-      (data) => data.date === record.date && data.set === record.set
+      (data) => data.date === record.date && data.order === record.order
     );
-    if (index !== -1) return null;
+    if (index !== -1) return recordData.data[index].id;
     const newRecord = {
       id: ++recordData.increment,
       ...record,
