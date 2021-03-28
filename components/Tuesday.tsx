@@ -119,89 +119,104 @@ const Tuesday = ({ date }: TuesdayProps) => {
           isSuccessed: count === order,
           isDone: true,
           isSaved: true,
-        })) as TuesdayRecord[]
-        const failCount = newRecords.filter(({ isSuccessed }) => !isSuccessed).length
+        })) as TuesdayRecord[];
+        const failCount = newRecords.filter(({ isSuccessed }) => !isSuccessed)
+          .length;
         if (failCount === 2) setStatus('COMPLETE');
         else if (records.length > 0) setStatus('EXERCISING');
+        else setStatus('READY');
         setRecords(newRecords);
       }
-
     } catch (error) {
       throw error;
     }
   }, [member, date, records, lastWeekMax]);
 
-  const updateRecord = useCallback(async (record: Record): Promise<Record | void> => {
-    try {
-      const res = await axios.put(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record
+  const updateRecord = useCallback(
+    async (record: Record): Promise<Record | void> => {
+      try {
+        const res = await axios.put(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member])
+    },
+    [member]
+  );
 
-  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>): Promise<Record | void> => {
-    try {
-      const res = await axios.post(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record;
-      } else if (res && res.status === 202) {
-        const { id } = res.data;
-        return await updateRecord({ id, ...record }) as Record
+  const enrollRecord = useCallback(
+    async (record: Omit<Record, 'id'>): Promise<Record | void> => {
+      try {
+        const res = await axios.post(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        } else if (res && res.status === 202) {
+          const { id } = res.data;
+          return (await updateRecord({ id, ...record })) as Record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member]);
+    },
+    [member]
+  );
 
   const sync = useCallback(async () => {
     try {
-      const index = records.findIndex(({ isDone, isSaved }) => isDone && !isSaved);
+      const index = records.findIndex(
+        ({ isDone, isSaved }) => isDone && !isSaved
+      );
       if (index === -1) return;
-      Promise.all(records.map(async ({ id, count, isDone, isSaved }, index) => {
-        if (!isDone || isSaved) return null;
-        const newRecord: Omit<Record, 'id'> = {
-          date: dateFormat(date, 'yyyymmdd'),
-          type: 'MAX_COUNT',
-          count,
-          order: index + 1
-        }
-        if (id) {
-          return await updateRecord({ id, ...newRecord })
-        } else {
-          return await enrollRecord(newRecord)
-        }
-      })).then(results => {
+      Promise.all(
+        records.map(async ({ id, count, isDone, isSaved }, index) => {
+          if (!isDone || isSaved) return null;
+          const newRecord: Omit<Record, 'id'> = {
+            date: dateFormat(date, 'yyyymmdd'),
+            type: 'MAX_COUNT',
+            count,
+            order: index + 1,
+          };
+          if (id) {
+            return await updateRecord({ id, ...newRecord });
+          } else {
+            return await enrollRecord(newRecord);
+          }
+        })
+      ).then((results) => {
         let willBeUpdate = false;
         const newRecords = [...records];
         results.forEach((result, index) => {
           if (result === null) return;
           if (!willBeUpdate) willBeUpdate = true;
           newRecords[index].isSaved = true;
-        })
-        if (willBeUpdate) setRecords(newRecords)
-      })
+        });
+        if (willBeUpdate) setRecords(newRecords);
+      });
     } catch (error) {
       throw error;
     }
-  }, [records, updateRecord, enrollRecord])
+  }, [records, updateRecord, enrollRecord]);
 
   useEffect(() => {
-    sync()
+    sync();
   }, [records]);
 
   useEffect(() => {
     getRecords();
-  }, []);
+  }, [date]);
 
   return (
     <div>
       <PushUp date={date} />
       <p>Pyramid</p>
       {records.map((record, index) => {
-        return <span key={index}>{`${record.count} [${record.isSaved ? 'saved' : ''}] `}</span>;
+        return (
+          <span key={index}>{`${record.count} [${
+            record.isSaved ? 'saved' : ''
+          }] `}</span>
+        );
       })}
       {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
       {status === 'EXERCISING' && (

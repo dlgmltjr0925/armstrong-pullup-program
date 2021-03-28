@@ -1,10 +1,11 @@
-import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { Member, Record, Status } from "../interfaces";
-import PushUp from "./PushUp";
-import Timer from "./Timer";
+import { Member, Record, Status } from '../interfaces';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import PushUp from './PushUp';
+import Timer from './Timer';
+import axios from 'axios';
 import dateFormat from 'dateformat';
+import { useSelector } from 'react-redux';
 
 interface WednesdayRecord {
   id?: number;
@@ -14,24 +15,30 @@ interface WednesdayRecord {
 }
 
 interface WednesdayProps {
-  date: Date
+  date: Date;
 }
 
 const REST_TIME = 60; // 60s
 
-const initialRecords = Array.from({ length: 9 }, () => ({
-  count: 1,
-  isDone: false,
-  isSaved: false,
-}))
+const getInitialRecords = () =>
+  Array.from({ length: 9 }, () => ({
+    count: 1,
+    isDone: false,
+    isSaved: false,
+  }));
 
 const Wednesday = ({ date }: WednesdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
   const [goal, setGoal] = useState<number>(1);
-  const [records, setRecords] = useState<WednesdayRecord[]>(initialRecords);
+  const [records, setRecords] = useState<WednesdayRecord[]>(
+    getInitialRecords()
+  );
 
-  const currentOrder = useMemo(() => records.findIndex(({ isDone }) => !isDone), [records]);
+  const currentOrder = useMemo(
+    () => records.findIndex(({ isDone }) => !isDone),
+    [records]
+  );
 
   const handleClickReady = useCallback(() => {
     setStatus('EXERCISING');
@@ -55,7 +62,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
   }, [currentOrder, records, goal]);
 
   const getRecords = useCallback(async () => {
-    const newRecords = [...records]
+    const newRecords = getInitialRecords();
     try {
       let goal = 1;
       const lastWeekDate = new Date(date);
@@ -69,7 +76,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
         records.forEach(({ count }: Record) => {
           if (count > max) max = count;
         });
-        goal = Math.floor(max / 2)
+        goal = Math.floor(max / 2);
         setGoal(goal);
       }
 
@@ -86,6 +93,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
         });
         if (records.length === 9) setStatus('COMPLETE');
         else if (records.length > 0) setStatus('EXERCISING');
+        else setStatus('READY');
       }
 
       setRecords(newRecords);
@@ -94,74 +102,84 @@ const Wednesday = ({ date }: WednesdayProps) => {
     }
   }, [member, date, records]);
 
-  const updateRecord = useCallback(async (record: Record): Promise<Record | void> => {
-    try {
-      const res = await axios.put(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record
+  const updateRecord = useCallback(
+    async (record: Record): Promise<Record | void> => {
+      try {
+        const res = await axios.put(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member])
+    },
+    [member]
+  );
 
-  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>): Promise<Record | void> => {
-    try {
-      const res = await axios.post(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record;
-      } else if (res && res.status === 202) {
-        const { id } = res.data;
-        return await updateRecord({ id, ...record }) as Record
+  const enrollRecord = useCallback(
+    async (record: Omit<Record, 'id'>): Promise<Record | void> => {
+      try {
+        const res = await axios.post(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        } else if (res && res.status === 202) {
+          const { id } = res.data;
+          return (await updateRecord({ id, ...record })) as Record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member]);
+    },
+    [member]
+  );
 
   const sync = useCallback(async () => {
     try {
-      const index = records.findIndex(({ isDone, isSaved }) => isDone && !isSaved);
+      const index = records.findIndex(
+        ({ isDone, isSaved }) => isDone && !isSaved
+      );
       if (index === -1) return;
-      Promise.all(records.map(async ({ id, count, isDone, isSaved }, index) => {
-        if (!isDone || isSaved) return null;
-        const newRecord: Omit<Record, 'id'> = {
-          date: dateFormat(date, 'yyyymmdd'),
-          type: 'THREE_GRIP',
-          count,
-          order: index + 1
-        }
-        if (id) {
-          return await updateRecord({ id, ...newRecord })
-        } else {
-          return await enrollRecord(newRecord)
-        }
-      })).then(results => {
+      Promise.all(
+        records.map(async ({ id, count, isDone, isSaved }, index) => {
+          if (!isDone || isSaved) return null;
+          const newRecord: Omit<Record, 'id'> = {
+            date: dateFormat(date, 'yyyymmdd'),
+            type: 'THREE_GRIP',
+            count,
+            order: index + 1,
+          };
+          if (id) {
+            return await updateRecord({ id, ...newRecord });
+          } else {
+            return await enrollRecord(newRecord);
+          }
+        })
+      ).then((results) => {
         let willBeUpdate = false;
         const newRecords = [...records];
         results.forEach((result, index) => {
           if (result === null) return;
           if (!willBeUpdate) willBeUpdate = true;
           newRecords[index].isSaved = true;
-        })
-        if (willBeUpdate) setRecords(newRecords)
-      })
+        });
+        if (willBeUpdate) setRecords(newRecords);
+      });
     } catch (error) {
       throw error;
     }
-  }, [records, updateRecord, enrollRecord])
+  }, [records, updateRecord, enrollRecord]);
 
   useEffect(() => {
-    sync()
+    sync();
   }, [records]);
 
   useEffect(() => {
     getRecords();
-  }, []);
+  }, [date]);
 
   return (
     <div>
-      <PushUp date={date}/>
+      <PushUp date={date} />
       <p>{`count : ${goal}`}</p>
       <p>pull up 3 sets</p>
       {records.slice(0, 3).map(({ count, isDone, isSaved }, index) => {
@@ -170,30 +188,34 @@ const Wednesday = ({ date }: WednesdayProps) => {
             <span>{count}</span>
             {isSaved && <span> [saved]</span>}
           </span>
-        )
+        );
       })}
-      {(currentOrder === -1 || currentOrder >= 3) && <>
-        <p>chin up 3 sets</p>
+      {(currentOrder === -1 || currentOrder >= 3) && (
+        <>
+          <p>chin up 3 sets</p>
           {records.slice(3, 6).map(({ count, isDone, isSaved }, index) => {
             return !isDone ? null : (
               <span key={index}>
                 <span>{count}</span>
                 {isSaved && <span> [saved]</span>}
               </span>
-            )
+            );
           })}
-      </>}
-      {(currentOrder === -1 || currentOrder >= 6) && <>
-        <p>wide pull up 3 sets</p>
+        </>
+      )}
+      {(currentOrder === -1 || currentOrder >= 6) && (
+        <>
+          <p>wide pull up 3 sets</p>
           {records.slice(6, 9).map(({ count, isDone, isSaved }, index) => {
             return !isDone ? null : (
               <span key={index}>
                 <span>{count}</span>
                 {isSaved && <span> [saved]</span>}
               </span>
-            )
+            );
           })}
-      </>}
+        </>
+      )}
       {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
       {status === 'EXERCISING' && (
         <>
@@ -207,7 +229,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
         </div>
       )}
     </div>
-  )
+  );
 };
 
 export default Wednesday;

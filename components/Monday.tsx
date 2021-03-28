@@ -20,18 +20,22 @@ interface MondayProps {
 
 const REST_TIME = 90; // 90s
 
-const initialRecords = Array.from({ length: 5 }, () => ({
-  count: 0,
-  isDone: false,
-  isSaved: false,
-}))
+const getInitialRecords = () =>
+  Array.from({ length: 5 }, () => ({
+    count: 0,
+    isDone: false,
+    isSaved: false,
+  }));
 
 const Monday = ({ date }: MondayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
-  const [records, setRecords] = useState<MondayRecord[]>(initialRecords);
+  const [records, setRecords] = useState<MondayRecord[]>(getInitialRecords());
 
-  const currentOrder = useMemo(() => records.findIndex(({ isDone }) => !isDone), [records]);
+  const currentOrder = useMemo(
+    () => records.findIndex(({ isDone }) => !isDone),
+    [records]
+  );
 
   const handleClickReady = useCallback(() => {
     setStatus('EXERCISING');
@@ -64,7 +68,7 @@ const Monday = ({ date }: MondayProps) => {
   );
 
   const getRecords = useCallback(async () => {
-    const newRecords = [...records];
+    const newRecords = getInitialRecords();
     try {
       const lastWeekDate = new Date(date);
       lastWeekDate.setDate(lastWeekDate.getDate() - 7);
@@ -92,6 +96,7 @@ const Monday = ({ date }: MondayProps) => {
         });
         if (records.length === 5) setStatus('COMPLETE');
         else if (records.length > 0) setStatus('EXERCISING');
+        else setStatus('READY');
       }
 
       setRecords(newRecords);
@@ -100,70 +105,80 @@ const Monday = ({ date }: MondayProps) => {
     }
   }, [member, date, records]);
 
-  const updateRecord = useCallback(async (record: Record): Promise<Record | void> => {
-    try {
-      const res = await axios.put(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record
+  const updateRecord = useCallback(
+    async (record: Record): Promise<Record | void> => {
+      try {
+        const res = await axios.put(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member])
+    },
+    [member]
+  );
 
-  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>): Promise<Record | void> => {
-    try {
-      const res = await axios.post(`/api/record/${member.id}`, { record });
-      if (res && res.status === 200) {
-        return res.data.record;
-      } else if (res && res.status === 202) {
-        const { id } = res.data;
-        return await updateRecord({ id, ...record }) as Record
+  const enrollRecord = useCallback(
+    async (record: Omit<Record, 'id'>): Promise<Record | void> => {
+      try {
+        const res = await axios.post(`/api/record/${member.id}`, { record });
+        if (res && res.status === 200) {
+          return res.data.record;
+        } else if (res && res.status === 202) {
+          const { id } = res.data;
+          return (await updateRecord({ id, ...record })) as Record;
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [member]);
+    },
+    [member]
+  );
 
   const sync = useCallback(async () => {
     try {
-      const index = records.findIndex(({ isDone, isSaved }) => isDone && !isSaved);
+      const index = records.findIndex(
+        ({ isDone, isSaved }) => isDone && !isSaved
+      );
       if (index === -1) return;
-      Promise.all(records.map(async ({ id, count, isDone, isSaved }, index) => {
-        if (!isDone || isSaved) return null;
-        const newRecord: Omit<Record, 'id'> = {
-          date: dateFormat(date, 'yyyymmdd'),
-          type: 'MAX_COUNT',
-          count,
-          order: index + 1
-        }
-        if (id) {
-          return await updateRecord({ id, ...newRecord })
-        } else {
-          return await enrollRecord(newRecord)
-        }
-      })).then(results => {
+      Promise.all(
+        records.map(async ({ id, count, isDone, isSaved }, index) => {
+          if (!isDone || isSaved) return null;
+          const newRecord: Omit<Record, 'id'> = {
+            date: dateFormat(date, 'yyyymmdd'),
+            type: 'MAX_COUNT',
+            count,
+            order: index + 1,
+          };
+          if (id) {
+            return await updateRecord({ id, ...newRecord });
+          } else {
+            return await enrollRecord(newRecord);
+          }
+        })
+      ).then((results) => {
         let willBeUpdate = false;
         const newRecords = [...records];
         results.forEach((result, index) => {
           if (result === null) return;
           if (!willBeUpdate) willBeUpdate = true;
           newRecords[index].isSaved = true;
-        })
-        if (willBeUpdate) setRecords(newRecords)
-      })
+        });
+        if (willBeUpdate) setRecords(newRecords);
+      });
     } catch (error) {
       throw error;
     }
-  }, [records, updateRecord, enrollRecord])
+  }, [records, updateRecord, enrollRecord]);
 
   useEffect(() => {
-    sync()
+    sync();
   }, [records]);
 
   useEffect(() => {
     getRecords();
-  }, []);
+  }, [date]);
 
   return (
     <div>
