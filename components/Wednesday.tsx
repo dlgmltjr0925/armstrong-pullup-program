@@ -66,18 +66,30 @@ const Wednesday = ({ date }: WednesdayProps) => {
     try {
       let goal = 1;
       const lastWeekDate = new Date(date);
-      lastWeekDate.setDate(lastWeekDate.getDate() - 2);
+      lastWeekDate.setDate(lastWeekDate.getDate() - 6);
       const lastWeek = dateFormat(lastWeekDate, 'yyyymmdd');
       let res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        let max = 0;
-        records.forEach(({ count }: Record) => {
-          if (count > max) max = count;
-        });
-        goal = Math.floor(max / 2);
-        setGoal(goal);
+        if (records.length <= 9) {
+          const firstDate = new Date(date);
+          firstDate.setDate(firstDate.getDate() - 2);
+          const first = dateFormat(firstDate, 'yyyymmdd');
+          res = await axios.get(`/api/record/${member.id}/${first}`);
+
+          if (res && res.status === 200) {
+            const { records } = res.data;
+            let max = 0;
+            records.forEach(({ count }: Record) => {
+              if (count > max) max = count;
+            });
+            goal = Math.floor(max / 2);
+            setGoal(goal);
+          }
+        } else {
+          setGoal(records[0].count + 1);
+        }
       }
 
       const today = dateFormat(date, 'yyyymmdd');
