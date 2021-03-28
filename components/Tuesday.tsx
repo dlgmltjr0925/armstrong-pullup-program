@@ -31,7 +31,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
     const index = records.findIndex(({ isSuccessed }) => !isSuccessed);
     const isFailed = index !== -1;
     const restTime = index === -1 ? records.length : index;
-    return [isFailed, restTime];
+    return [isFailed, restTime * 10];
   }, [records]);
 
   const handleClickReady = useCallback(() => {
