@@ -11,9 +11,9 @@ interface TuesdayProps {
   date: Date;
 }
 
-interface Count {
-  prev?: number;
-  current: number;
+interface TuesdayRecord {
+  id?: number;
+  count: number;
   isSuccessed: boolean;
   isDone: boolean;
   isSaved: boolean;
@@ -22,68 +22,59 @@ interface Count {
 const Tuesday = ({ date }: TuesdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
-  const [counts, setCounts] = useState<Count[]>([]);
+  const [records, setRecords] = useState<TuesdayRecord[]>([]);
+  const [lastWeekMax, setLastWeekMax] = useState<number>(0);
 
-  const currentSet = useMemo(() => counts.length, [counts]);
+  const currentOrder = useMemo(() => records.length, [records]);
 
   const [isFailed, restTime] = useMemo(() => {
-    const index = counts.findIndex(({ isSuccessed }) => !isSuccessed);
+    const index = records.findIndex(({ isSuccessed }) => !isSuccessed);
     const isFailed = index !== -1;
-    return [isFailed, index === -1 ? counts.length : (index + 1) * 10];
-  }, [counts]);
+    const restTime = index === -1 ? records.length : index;
+    return [isFailed, restTime];
+  }, [records]);
 
   const handleClickReady = useCallback(() => {
     setStatus('EXERCISING');
   }, []);
 
   const handleClickSuccess = useCallback(() => {
-    setCounts([
-      ...counts,
+    setRecords([
+      ...records,
       {
-        current: counts.length + 1,
+        count: records.length + 1,
         isSuccessed: true,
         isDone: true,
         isSaved: false,
       },
     ]);
     setStatus('REST');
-  }, [counts]);
+  }, [records]);
 
   const handleClickFail = useCallback(() => {
-    setCounts([
-      ...counts,
+    setRecords([
+      ...records,
       {
-        current: counts.length,
+        count: records.length,
         isSuccessed: false,
         isDone: true,
         isSaved: false,
       },
     ]);
     setStatus('REST');
-  }, [counts]);
+  }, [records]);
 
   const handleClickFinish = useCallback(() => {
     setStatus('COMPLETE');
   }, []);
 
-  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>) => {
-    try {
-      const res = await axios.post(`/api/record/${member.id}`, {
-        record,
-      });
-      return res && res.status === 200;
-    } catch (error) {
-      throw error;
-    }
-  }, []);
-
   const handleEndTimer = useCallback(() => {
     if (isFailed) {
-      const { length } = counts;
-      setCounts([
-        ...counts,
+      const { length } = records;
+      setRecords([
+        ...records,
         {
-          ...counts[length - 1],
+          ...records[length - 1],
           isSuccessed: false,
           isSaved: false,
         },
@@ -95,37 +86,122 @@ const Tuesday = ({ date }: TuesdayProps) => {
   const handleChangeCount = useCallback(
     async (e) => {
       const count = parseInt(e.target.value, 10);
-      const newCounts = [...counts];
-      newCounts[currentSet - 1].current = isNaN(count) ? 0 : count;
-      setCounts(newCounts);
+      const newCounts = [...records];
+      newCounts[currentOrder - 1].count = isNaN(count) ? 0 : count;
+      newCounts[currentOrder - 1].isSaved = false;
+      setRecords(newCounts);
     },
-    [currentSet, counts]
+    [currentOrder, records]
   );
 
-  useEffect(() => {
-    if (currentSet === 0) return;
-    const index = currentSet === -1 ? 4 : currentSet - 1;
-    const prevSetCount = counts[index];
-    if (prevSetCount.isDone && !prevSetCount.isSaved) {
-      try {
-        enrollRecord({
+  const getRecords = useCallback(async () => {
+    try {
+      const lastWeekDate = new Date(date);
+      lastWeekDate.setDate(lastWeekDate.getDate() - 7);
+      const lastWeek = dateFormat(lastWeekDate, 'yyyymmdd');
+      let res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
+
+      if (res && res.status === 200) {
+        const { records } = res.data;
+        const max = records.length - 2;
+        if (max > lastWeekMax) setLastWeekMax(max);
+      }
+
+      const today = dateFormat(date, 'yyyymmdd');
+      res = await axios.get(`/api/record/${member.id}/${today}`);
+
+      if (res && res.status === 200) {
+        const { records } = res.data;
+        if (records.length === 0) return;
+        const newRecords = records.map(({ id, count, order }: Record) => ({
+          id,
+          count,
+          isSuccessed: count === order,
+          isDone: true,
+          isSaved: true,
+        })) as TuesdayRecord[]
+        const failCount = newRecords.filter(({ isSuccessed }) => !isSuccessed).length
+        if (failCount === 2) setStatus('COMPLETE');
+        else if (records.length > 0) setStatus('EXERCISING');
+        setRecords(newRecords);
+      }
+
+    } catch (error) {
+      throw error;
+    }
+  }, [member, date, records, lastWeekMax]);
+
+  const updateRecord = useCallback(async (record: Record): Promise<Record | void> => {
+    try {
+      const res = await axios.put(`/api/record/${member.id}`, { record });
+      if (res && res.status === 200) {
+        return res.data.record
+      }
+    } catch (error) {
+      throw error;
+    }
+  }, [member])
+
+  const enrollRecord = useCallback(async (record: Omit<Record, 'id'>): Promise<Record | void> => {
+    try {
+      const res = await axios.post(`/api/record/${member.id}`, { record });
+      if (res && res.status === 200) {
+        return res.data.record;
+      } else if (res && res.status === 202) {
+        const { id } = res.data;
+        return await updateRecord({ id, ...record }) as Record
+      }
+    } catch (error) {
+      throw error;
+    }
+  }, [member]);
+
+  const sync = useCallback(async () => {
+    try {
+      const index = records.findIndex(({ isDone, isSaved }) => isDone && !isSaved);
+      if (index === -1) return;
+      Promise.all(records.map(async ({ id, count, isDone, isSaved }, index) => {
+        if (!isDone || isSaved) return null;
+        const newRecord: Omit<Record, 'id'> = {
           date: dateFormat(date, 'yyyymmdd'),
           type: 'MAX_COUNT',
-          count: prevSetCount.current,
-          order: index + 1,
-        });
-      } catch (error) {
-        console.error(error);
-      }
+          count,
+          order: index + 1
+        }
+        if (id) {
+          return await updateRecord({ id, ...newRecord })
+        } else {
+          return await enrollRecord(newRecord)
+        }
+      })).then(results => {
+        let willBeUpdate = false;
+        const newRecords = [...records];
+        results.forEach((result, index) => {
+          if (result === null) return;
+          if (!willBeUpdate) willBeUpdate = true;
+          newRecords[index].isSaved = true;
+        })
+        if (willBeUpdate) setRecords(newRecords)
+      })
+    } catch (error) {
+      throw error;
     }
-  }, [currentSet]);
+  }, [records, updateRecord, enrollRecord])
+
+  useEffect(() => {
+    sync()
+  }, [records]);
+
+  useEffect(() => {
+    getRecords();
+  }, []);
 
   return (
     <div>
       <PushUp date={date} />
       <p>Pyramid</p>
-      {counts.map((count: Count, index) => {
-        return <span key={index}>{`${count.current}  `}</span>;
+      {records.map((record, index) => {
+        return <span key={index}>{`${record.count} [${record.isSaved ? 'saved' : ''}] `}</span>;
       })}
       {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
       {status === 'EXERCISING' && (
@@ -141,7 +217,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
               <input
                 type='text'
                 pattern='\d*'
-                value={counts[currentSet - 1].current}
+                value={records[currentOrder - 1].count}
                 onChange={handleChangeCount}
               />
               <button onClick={handleClickFinish}>종료</button>
@@ -158,7 +234,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
               <input
                 type='text'
                 pattern='\d*'
-                value={counts[currentSet - 1].current}
+                value={records[currentOrder - 1].count}
                 onChange={handleChangeCount}
               />
             </p>

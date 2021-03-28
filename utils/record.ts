@@ -47,7 +47,7 @@ const getRecordData = (memberId: number): Data<Record> => {
 const save = (memberId: number, recordData: Data<Record>) => {
   try {
     const path = getRecordPath(memberId);
-    fs.writeFileSync(path, JSON.stringify(recordData), {
+    fs.writeFileSync(path, JSON.stringify(recordData, null, 2), {
       encoding: 'utf-8',
     });
   } catch (error) {

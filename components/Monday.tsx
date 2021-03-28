@@ -118,7 +118,7 @@ const Monday = ({ date }: MondayProps) => {
         return res.data.record;
       } else if (res && res.status === 202) {
         const { id } = res.data;
-        return await updateRecord({ ...record, id }) as Record
+        return await updateRecord({ id, ...record }) as Record
       }
     } catch (error) {
       throw error;
@@ -138,7 +138,7 @@ const Monday = ({ date }: MondayProps) => {
           order: index + 1
         }
         if (id) {
-          return await updateRecord({ ...newRecord, id })
+          return await updateRecord({ id, ...newRecord })
         } else {
           return await enrollRecord(newRecord)
         }
