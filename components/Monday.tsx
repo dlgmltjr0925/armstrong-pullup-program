@@ -1,4 +1,4 @@
-import { Member, Record } from '../interfaces';
+import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PushUp from './PushUp';
@@ -7,12 +7,11 @@ import axios from 'axios';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
 
-type Status = 'READY' | 'EXERCISING' | 'REST' | 'COMPLETE';
 interface MondayProps {
   date: Date;
 }
 
-const REST_TIME = 2; // 90s
+const REST_TIME = 90; // 90s
 
 const Monday = ({ date }: MondayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
@@ -30,21 +29,13 @@ const Monday = ({ date }: MondayProps) => {
     counts,
   ]);
 
-  const getYesterdayRecords = useCallback(async () => {
-    try {
-      const lastWeekDate = new Date(date);
-      lastWeekDate.setDate(lastWeekDate.getDate() - 7);
-      const lastWeek = dateFormat(lastWeekDate, 'yyyymmdd');
-      const res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
+  const handleClickReady = useCallback(() => {
+    setStatus('EXERCISING');
+  }, []);
 
-      if (res && res.status === 200) {
-        const { records } = res.data;
-        console.log('getYesterdayRecords', records);
-      }
-    } catch (error) {
-      throw error;
-    }
-  }, [member, date]);
+  const handleClickRest = useCallback(() => {
+    setStatus('REST');
+  }, []);
 
   const getRecords = useCallback(async () => {
     const newCounts = [...counts];
@@ -82,7 +73,7 @@ const Monday = ({ date }: MondayProps) => {
     } catch (error) {
       throw error;
     }
-  }, [member, date, counts, getYesterdayRecords]);
+  }, [member, date, counts]);
 
   const enrollRecord = useCallback(async (record: Omit<Record, 'id'>) => {
     try {
@@ -93,14 +84,6 @@ const Monday = ({ date }: MondayProps) => {
     } catch (error) {
       throw error;
     }
-  }, []);
-
-  const handleClickReady = useCallback(() => {
-    setStatus('EXERCISING');
-  }, []);
-
-  const handlePressRest = useCallback(() => {
-    setStatus('REST');
   }, []);
 
   const handleEndTimer = useCallback(async () => {
@@ -130,12 +113,6 @@ const Monday = ({ date }: MondayProps) => {
     const index = currentSet === -1 ? 4 : currentSet - 1;
     const prevSetCount = counts[index];
     if (prevSetCount.isDone && !prevSetCount.isSaved) {
-      console.log({
-        date: dateFormat(date, 'yyyymmdd'),
-        type: 'MAX_COUNT',
-        count: prevSetCount.current,
-        set: index + 1,
-      });
       try {
         enrollRecord({
           date: dateFormat(date, 'yyyymmdd'),
@@ -169,7 +146,7 @@ const Monday = ({ date }: MondayProps) => {
       {status === 'EXERCISING' && (
         <>
           <p>운동 중</p>
-          <button onClick={handlePressRest}>휴식</button>
+          <button onClick={handleClickRest}>휴식</button>
         </>
       )}
       {status === 'REST' && (

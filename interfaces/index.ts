@@ -21,3 +21,5 @@ export interface Record {
   count: number;
   set: number;
 }
+
+export type Status = 'READY' | 'EXERCISING' | 'REST' | 'COMPLETE';
