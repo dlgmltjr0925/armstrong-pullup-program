@@ -18,7 +18,7 @@ interface WednesdayProps {
   date: Date;
 }
 
-const REST_TIME = 60; // 60s
+const REST_TIME = 2; // 60s
 
 const getInitialRecords = () =>
   Array.from({ length: 9 }, () => ({
@@ -64,9 +64,10 @@ const Wednesday = ({ date }: WednesdayProps) => {
   const getRecords = useCallback(async () => {
     const newRecords = getInitialRecords();
     try {
+      const diff = date.getDay() === 3 ? 0 : 2;
       let goal = 1;
       const lastWeekDate = new Date(date);
-      lastWeekDate.setDate(lastWeekDate.getDate() - 6);
+      lastWeekDate.setDate(lastWeekDate.getDate() - 6 - diff);
       const lastWeek = dateFormat(lastWeekDate, 'yyyymmdd');
       let res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
 
@@ -74,7 +75,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
         const { records } = res.data;
         if (records.length < 2) {
           const firstDate = new Date(date);
-          firstDate.setDate(firstDate.getDate() - 2);
+          firstDate.setDate(firstDate.getDate() - 2 - diff);
           const first = dateFormat(firstDate, 'yyyymmdd');
           res = await axios.get(`/api/record/${member.id}/${first}`);
 

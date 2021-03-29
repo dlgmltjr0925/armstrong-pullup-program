@@ -19,6 +19,8 @@ interface TuesdayRecord {
   isSaved: boolean;
 }
 
+const REST_TIME_RATIO = 1; // 10 s
+
 const Tuesday = ({ date }: TuesdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
@@ -31,7 +33,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
     const index = records.findIndex(({ isSuccessed }) => !isSuccessed);
     const isFailed = index !== -1;
     const restTime = index === -1 ? records.length : index;
-    return [isFailed, restTime * 10];
+    return [isFailed, restTime * REST_TIME_RATIO];
   }, [records]);
 
   const handleClickReady = useCallback(() => {
@@ -85,9 +87,12 @@ const Tuesday = ({ date }: TuesdayProps) => {
 
   const handleChangeCount = useCallback(
     async (e) => {
+      const max = records.findIndex(({ isSuccessed }) => !isSuccessed);
       const count = parseInt(e.target.value, 10);
       const newCounts = [...records];
-      newCounts[currentOrder - 1].count = isNaN(count) ? 0 : count;
+      newCounts[currentOrder - 1].count = isNaN(count)
+        ? 0
+        : Math.min(count, max);
       newCounts[currentOrder - 1].isSaved = false;
       setRecords(newCounts);
     },

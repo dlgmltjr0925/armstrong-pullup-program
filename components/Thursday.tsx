@@ -18,13 +18,13 @@ interface ThursdayProps {
   date: Date;
 }
 
-const REST_TIME = 60; // 60s
+const REST_TIME = 2; // 60s
 
 const Thursday = ({ date }: ThursdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const [status, setStatus] = useState<Status>('READY');
   const [records, setRecords] = useState<ThursdayRecord[]>([]);
-  const [goal, setGoal] = useState<number>(3);
+  const [goal, setGoal] = useState<number>(1);
 
   const currentOrder = useMemo(() => records.length, [records]);
 
@@ -48,7 +48,7 @@ const Thursday = ({ date }: ThursdayProps) => {
     setRecords([
       ...records,
       {
-        count: goal,
+        count: goal - 1,
         isDone: false,
         isSaved: false,
       },
@@ -66,7 +66,7 @@ const Thursday = ({ date }: ThursdayProps) => {
       const newCounts = [...records];
       newCounts[currentOrder - 1].count = isNaN(count)
         ? 0
-        : count > goal
+        : count >= goal
         ? goal - 1
         : count;
       newCounts[currentOrder - 1].isSaved = false;
@@ -83,11 +83,12 @@ const Thursday = ({ date }: ThursdayProps) => {
 
   const getRecords = useCallback(async () => {
     try {
+      const diff = date.getDay() === 4 ? 0 : 1;
       let goal = 1;
-      const firstDate = new Date(date);
-      firstDate.setDate(firstDate.getDate() - 1);
-      const lastWeek = dateFormat(firstDate, 'yyyymmdd');
-      let res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
+      const yesterdayDate = new Date(date);
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1 - diff);
+      const yesterday = dateFormat(yesterdayDate, 'yyyymmdd');
+      let res = await axios.get(`/api/record/${member.id}/${yesterday}`);
 
       if (res && res.status === 200) {
         const { records } = res.data;
@@ -95,8 +96,7 @@ const Thursday = ({ date }: ThursdayProps) => {
         records.forEach(({ count }: Record) => {
           if (count > max) max = count;
         });
-        goal = Math.floor(max / 2);
-        setGoal(goal);
+        setGoal(max);
       }
 
       const today = dateFormat(date, 'yyyymmdd');
