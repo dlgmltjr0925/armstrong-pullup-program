@@ -72,7 +72,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        if (records.length <= 9) {
+        if (records.length < 2) {
           const firstDate = new Date(date);
           firstDate.setDate(firstDate.getDate() - 2);
           const first = dateFormat(firstDate, 'yyyymmdd');
@@ -87,6 +87,8 @@ const Wednesday = ({ date }: WednesdayProps) => {
             goal = Math.floor(max / 2);
             setGoal(goal);
           }
+        } else if (records.length <= 9) {
+          setGoal(records[0].count);
         } else {
           setGoal(records[0].count + 1);
         }
