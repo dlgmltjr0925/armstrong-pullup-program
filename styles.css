@@ -42,3 +42,73 @@ header nav {
   width: 20px;
   height: 20p;
 }
+
+.push-up-container {
+  padding: 5px 10px;
+}
+
+.count-input-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.count-input-container.invisible {
+  display: none;
+}
+
+.count-input-container .count-wrapper {
+  display: block;
+  border: 3px solid #ccc;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 100px 20% 0;
+  text-align: center;
+}
+
+.count-input-container .count-wrapper .count {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.count-input-container .keyboard-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10%;
+}
+
+.count-input-container .keyboard-wrapper .row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.count-input-container .keyboard-wrapper .key-pad {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+  background: #eee;
+  border: 0;
+  outline: 0;
+  margin: 5%;
+  font-size: 25px;
+  font-weight: bold;
+  padding-bottom: 7px;
+}
+
+.count-input-container .keyboard-wrapper .key-pad:active {
+  background: #ddd;
+}
+
+.count-input-container .keyboard-wrapper .key-pad.empty {
+  visibility: hidden;
+}
+
+.count-input-container .keyboard-wrapper .key-pad .back-icon {
+  padding-bottom: 0px;
+  font-size: 20px;
+}

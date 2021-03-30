@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import Clock from './Clock';
+import CountInput from './CountInput';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -29,6 +30,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
       </nav>
     </header>
     {children}
+    <CountInput />
   </div>
 );
 

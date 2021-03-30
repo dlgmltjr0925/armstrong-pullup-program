@@ -10,6 +10,7 @@ interface Record {
 }
 
 const PushUp = ({ date }: PushUpProps) => {
+  console.log(window.screen.width);
   const [records, setRecords] = useState<Record[]>(
     Array.from({ length: 3 }, () => ({
       prev: 0,
@@ -24,9 +25,9 @@ const PushUp = ({ date }: PushUpProps) => {
   }, []);
 
   return (
-    <div>
+    <div className='push-up-container'>
       {records.map(({ prev, count }, index) => {
-        if (count !== -1) return <span key={index}>{count}</span>;
+        if (count !== 0) return <span key={index}>{count}</span>;
         else return <button key={index}>{`set${index + 1}`}</button>;
       })}
     </div>
