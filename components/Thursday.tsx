@@ -18,7 +18,7 @@ interface ThursdayProps {
   date: Date;
 }
 
-const REST_TIME = 2; // 60s
+const REST_TIME = 60; // 60s
 
 const Thursday = ({ date }: ThursdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);

@@ -19,7 +19,7 @@ interface TuesdayRecord {
   isSaved: boolean;
 }
 
-const REST_TIME_RATIO = 1; // 10 s
+const REST_TIME_RATIO = 10; // 10 s
 
 const Tuesday = ({ date }: TuesdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);

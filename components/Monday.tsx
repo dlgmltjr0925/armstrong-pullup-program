@@ -18,7 +18,7 @@ interface MondayProps {
   date: Date;
 }
 
-const REST_TIME = 3; // 90s
+const REST_TIME = 90; // 90s
 
 const getInitialRecords = () =>
   Array.from({ length: 5 }, () => ({
