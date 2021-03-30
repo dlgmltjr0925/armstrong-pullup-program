@@ -1,5 +1,10 @@
+import {
+  faChevronCircleLeft,
+  faChevronCircleRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Friday from '../components/Friday';
 import Holiday from '../components/Holiday';
 import Layout from '../components/Layout';
@@ -64,11 +69,11 @@ const TodayPage = () => {
           week[date.getDay()]
         })`}</span>
         <div>
-          <button className='prev' onClick={handleClickPrev}>
-            {'<'}
+          <button className='btn prev' onClick={handleClickPrev}>
+            <FontAwesomeIcon className='icon' icon={faChevronCircleLeft} />
           </button>
-          <button className='next' onClick={handleClickNext}>
-            {'>'}
+          <button className='btn next' onClick={handleClickNext}>
+            <FontAwesomeIcon className='icon' icon={faChevronCircleRight} />
           </button>
         </div>
       </div>

@@ -4,8 +4,18 @@ interface PushUpProps {
   date: Date;
 }
 
+interface Record {
+  prev: number;
+  count: number;
+}
+
 const PushUp = ({ date }: PushUpProps) => {
-  const [counts, setCounts] = useState<number[]>([-1, -1, -1]);
+  const [records, setRecords] = useState<Record[]>(
+    Array.from({ length: 3 }, () => ({
+      prev: 0,
+      count: 0,
+    }))
+  );
 
   const getRecord = useCallback(async () => {}, []);
 
@@ -15,7 +25,7 @@ const PushUp = ({ date }: PushUpProps) => {
 
   return (
     <div>
-      {counts.map((count, index) => {
+      {records.map(({ prev, count }, index) => {
         if (count !== -1) return <span key={index}>{count}</span>;
         else return <button key={index}>{`set${index + 1}`}</button>;
       })}
