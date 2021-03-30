@@ -15,17 +15,16 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
       <title>{`${title} | Recon Ron Pullup Program`}</title>
       <meta charSet='utf-8' />
       <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+      <link
+        href={`https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap`}
+        rel='stylesheet'
+      />
     </Head>
     <header>
       <nav>
         <Link href='/'>
           <a>Today</a>
         </Link>
-        {` | `}
-        <Link href='/calendar'>
-          <a>Calendar</a>
-        </Link>
-        {` | `}
         <Clock />
       </nav>
     </header>

@@ -1,0 +1,22 @@
+div,
+span,
+a,
+button {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+.day-select-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+}
+
+.day-select-container .prev,
+.next {
+  border: none;
+}

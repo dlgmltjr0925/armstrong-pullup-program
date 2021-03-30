@@ -12,6 +12,8 @@ import dateFormat from 'dateformat';
 import { useRouter } from 'next/dist/client/router';
 import { useSelector } from 'react-redux';
 
+const week = ['일', '월', '화', '수', '목', '금', '토', '일'];
+
 const TodayPage = () => {
   const router = useRouter();
   const member = useSelector(({ member }: { member: MemberState }) => member);
@@ -56,10 +58,20 @@ const TodayPage = () => {
   }, [dayOfWeek]);
 
   return (
-    <Layout title='Today'>
-      <button onClick={handleClickPrev}>Prev</button>
-      <span>{dateFormat(date, 'yyyy. mm. dd')}</span>
-      <button onClick={handleClickNext}>Next</button>
+    <Layout title='Home'>
+      <div className='day-select-container'>
+        <span>{`${dateFormat(date, 'yyyy년 m월 dd일')} (${
+          week[date.getDay()]
+        })`}</span>
+        <div>
+          <button className='prev' onClick={handleClickPrev}>
+            {'<'}
+          </button>
+          <button className='next' onClick={handleClickNext}>
+            {'>'}
+          </button>
+        </div>
+      </div>
       <WeekComponent date={date} />
     </Layout>
   );
