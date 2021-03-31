@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 
 import Layout from '../components/Layout';
 import { Member } from '../interfaces';
-import { MemberActionType } from '../reducers/member';
 import MemberItem from '../components/MemberItem';
 import axios from 'axios';
+import { signInAction } from '../reducers/member';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/dist/client/router';
 
@@ -66,10 +66,7 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
   );
 
   const handleClickProfile = useCallback((profile: Member) => {
-    dispatch({
-      type: MemberActionType.SIGN_IN,
-      payload: profile,
-    });
+    dispatch(signInAction(profile));
     router.replace('/');
   }, []);
 

@@ -1,7 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { CountInputState } from '../reducers/countInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackspace } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
 
 const keyPads = [
   '1',
@@ -21,6 +23,18 @@ const keyPads = [
 const CountInput = () => {
   const [count, setCount] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
+  const countInput = useSelector(
+    ({ countInput }: { countInput: CountInputState }) => countInput
+  );
+
+  useEffect(() => {
+    if (countInput.count !== -1) {
+      setCount(countInput.count);
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+  }, [countInput]);
 
   const handleClickIncrease = (isIncrease: boolean) => {
     return () => {
@@ -42,9 +56,7 @@ const CountInput = () => {
   };
 
   return (
-    <div
-      className={`no-drag count-input-container${visible ? '' : ' invisible'}`}
-    >
+    <div className={`count-input-container${visible ? '' : ' invisible'}`}>
       <div className='count-container'>
         <button className='btn' onClick={handleClickIncrease(false)}>
           -
