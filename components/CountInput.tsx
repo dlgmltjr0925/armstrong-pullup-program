@@ -1,6 +1,7 @@
+import { useCallback, useState } from 'react';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackspace } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
 
 const keyPads = [
   '1',
@@ -19,31 +20,73 @@ const keyPads = [
 
 const CountInput = () => {
   const [count, setCount] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(true);
+
+  const handleClickIncrease = (isIncrease: boolean) => {
+    return () => {
+      let newCount = isIncrease ? count + 1 : count - 1;
+      newCount = newCount > 9999 ? 9999 : newCount < 0 ? 0 : newCount;
+      setCount(newCount);
+    };
+  };
+
+  const handleClickPad = (number: string) => {
+    return () => {
+      if (number === 'backspace') {
+        setCount(Math.floor(count / 10));
+      } else if (/\d/.test(number)) {
+        const newCount = parseInt(count + number, 10);
+        setCount(newCount > 9999 ? 9999 : newCount);
+      }
+    };
+  };
 
   return (
-    <div className={`count-input-container${visible ? '' : ' invisible'}`}>
-      <div className='count-wrapper'>
-        <span className='count'>{count}</span>
+    <div
+      className={`no-drag count-input-container${visible ? '' : ' invisible'}`}
+    >
+      <div className='count-container'>
+        <button className='btn' onClick={handleClickIncrease(false)}>
+          -
+        </button>
+        <div className='count-wrapper'>
+          <span className='count'>{count}</span>
+        </div>
+        <button className='btn' onClick={handleClickIncrease(true)}>
+          +
+        </button>
       </div>
+
       <div className='keyboard-wrapper'>
         <div className='row'>
           {keyPads.slice(0, 3).map((number) => (
-            <button key={number} className='key-pad'>
+            <button
+              key={number}
+              className='key-pad'
+              onClick={handleClickPad(number)}
+            >
               {number}
             </button>
           ))}
         </div>
         <div className='row'>
           {keyPads.slice(3, 6).map((number) => (
-            <button key={number} className='key-pad'>
+            <button
+              key={number}
+              className='key-pad'
+              onClick={handleClickPad(number)}
+            >
               {number}
             </button>
           ))}
         </div>
         <div className='row'>
           {keyPads.slice(6, 9).map((number) => (
-            <button key={number} className='key-pad'>
+            <button
+              key={number}
+              className='key-pad'
+              onClick={handleClickPad(number)}
+            >
               {number}
             </button>
           ))}
@@ -53,6 +96,7 @@ const CountInput = () => {
             <button
               key={number}
               className={`key-pad${number === '' ? ' empty' : ''}`}
+              onClick={handleClickPad(number)}
             >
               {number !== 'backspace' ? (
                 number

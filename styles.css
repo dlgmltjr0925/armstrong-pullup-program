@@ -60,16 +60,39 @@ header nav {
   display: none;
 }
 
-.count-input-container .count-wrapper {
-  display: block;
+.count-input-container .count-container {
+  display: flex;
+  margin-top: 100px;
+  height: 70px;
+  padding: 0 5%;
+}
+
+.count-input-container .count-container .count-wrapper {
+  flex: 1;
+  display: inline-block;
   border: 3px solid #ccc;
   border-radius: 10px;
   padding: 10px 15px;
-  margin: 100px 20% 0;
   text-align: center;
+  margin: 0 5%;
 }
 
-.count-input-container .count-wrapper .count {
+.count-input-container .count-container .btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 0;
+  outline: 0;
+  background: #eee;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.count-input-container .count-container .btn:active {
+  background: #ddd;
+}
+
+.count-input-container .count-container .count-wrapper .count {
   font-size: 25px;
   font-weight: bold;
 }
@@ -88,6 +111,7 @@ header nav {
 }
 
 .count-input-container .keyboard-wrapper .key-pad {
+  position: relative;
   height: 70px;
   width: 70px;
   border-radius: 50%;
@@ -97,7 +121,6 @@ header nav {
   margin: 5%;
   font-size: 25px;
   font-weight: bold;
-  padding-bottom: 7px;
 }
 
 .count-input-container .keyboard-wrapper .key-pad:active {
@@ -109,6 +132,16 @@ header nav {
 }
 
 .count-input-container .keyboard-wrapper .key-pad .back-icon {
-  padding-bottom: 0px;
-  font-size: 20px;
+  position: absolute;
+  top: 22px;
+  left: 18px;
+  width: 30px;
+}
+
+.no-drag {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
