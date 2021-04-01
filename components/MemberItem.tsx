@@ -1,7 +1,9 @@
 import { MouseEventHandler, useCallback } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { Member } from '../interfaces';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 interface MemberItemProps {
   profile?: Member;
@@ -40,13 +42,7 @@ const MemberItem = ({
     <button className='member-item' onClick={handleClickProfile}>
       <span className='nickname'>{profile.nickname}</span>
       <button className='remove-icon-wrapper' onClick={handleClickDelete}>
-        <Image
-          className='remove-icon'
-          src='/assets/images/iconClose.png'
-          alt='remove'
-          width={12}
-          height={12}
-        />
+        <FontAwesomeIcon className='remove-icon' icon={faTimes} />
       </button>
     </button>
   ) : (

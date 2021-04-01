@@ -285,13 +285,19 @@ header nav {
   height: 25px;
   border-radius: 50%;
   outline: 0;
-  background: white;
+  background: #1f2023;
+  opacity: 90%;
   border: 1px solid #ccc;
   padding: 0;
 }
 
 .member-list .member-item .remove-icon-wrapper:active {
   background: #eee;
+}
+
+.member-list .member-item .remove-icon-wrapper .remove-icon {
+  color: white;
+  width: 9px;
 }
 
 .member-list .new-item {
@@ -315,4 +321,5 @@ header nav {
   font-family: 'Nanum Pen Script', cursive;
   font-size: 25px;
   width: 100%;
+  padding: 0;
 }

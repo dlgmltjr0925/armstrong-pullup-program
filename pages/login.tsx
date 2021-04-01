@@ -53,11 +53,16 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
       setNickname(null);
     } else {
       try {
-        const res = await axios.post('/api/profile', { nickname });
-        if (res && res.data) {
-          const { profile } = res.data;
-          setProfiles([...profiles, profile]);
+        const result = confirm(`[${nickname}]으로 생성하시겠습니까?`);
+        if (!result) {
           setNickname(null);
+        } else {
+          const res = await axios.post('/api/profile', { nickname });
+          if (res && res.data) {
+            const { profile } = res.data;
+            setProfiles([...profiles, profile]);
+            setNickname(null);
+          }
         }
       } catch (error) {
         throw error;
