@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Layout from '../components/Layout';
 import { Member } from '../interfaces';
 import MemberItem from '../components/MemberItem';
 import axios from 'axios';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { signInAction } from '../reducers/member';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/dist/client/router';
@@ -15,10 +17,11 @@ interface LoginPageProps {
 const LoginPage = ({ ...props }: LoginPageProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const nicknameEl = useRef<HTMLInputElement>(null);
 
   const [profiles, setProfiles] = useState<Member[]>([]);
 
-  const [nickname, setNickname] = useState<string>('');
+  const [nickname, setNickname] = useState<string | null>(null);
 
   const handleChangeNickname = (e: any) => {
     setNickname(e.target.value);
@@ -37,18 +40,30 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
   }, []);
 
   const handleClickAdd = useCallback(async () => {
-    if (nickname.trim() === '') return;
-    try {
-      const res = await axios.post('/api/profile', { nickname });
-      if (res && res.data) {
-        const { profile } = res.data;
-        setProfiles([...profiles, profile]);
-        setNickname('');
-      }
-    } catch (error) {
-      throw error;
+    if (nickname === null) {
+      setNickname('');
+    } else {
+      if (nicknameEl.current) nicknameEl.current.focus();
     }
   }, [nickname]);
+
+  const handleBlurAdd = useCallback(async () => {
+    if (nickname === null) return;
+    else if (nickname.trim() === '') {
+      setNickname(null);
+    } else {
+      try {
+        const res = await axios.post('/api/profile', { nickname });
+        if (res && res.data) {
+          const { profile } = res.data;
+          setProfiles([...profiles, profile]);
+          setNickname(null);
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+  }, [nickname, profiles]);
 
   const handleClickDelete = useCallback(
     async (id: number) => {
@@ -76,7 +91,7 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
 
   return (
     <Layout title='Login'>
-      <div>
+      <div className='member-list'>
         {profiles.map((profile) => {
           return (
             <MemberItem
@@ -87,13 +102,25 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
             />
           );
         })}
+        {profiles.length < 4 && (
+          <button className='member-item new-item' onClick={handleClickAdd}>
+            {nickname === null ? (
+              <FontAwesomeIcon className='icon-plus' icon={faPlus} />
+            ) : (
+              <input
+                ref={nicknameEl}
+                className='new-nickname'
+                type='text'
+                placeholder='nickname'
+                autoFocus
+                value={nickname}
+                onChange={handleChangeNickname}
+                onBlur={handleBlurAdd}
+              />
+            )}
+          </button>
+        )}
       </div>
-      {profiles.length < 4 && (
-        <>
-          <input type='text' value={nickname} onChange={handleChangeNickname} />
-          <button onClick={handleClickAdd}>+</button>
-        </>
-      )}
     </Layout>
   );
 };

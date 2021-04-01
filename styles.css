@@ -1,8 +1,104 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  color: white;
+}
+
 div,
 span,
 a,
 button {
   font-family: 'Noto Sans KR', sans-serif;
+}
+
+html {
+  background: #1f2023;
+  min-width: 100vw;
+  min-height: 100vh;
 }
 
 header nav {
@@ -152,4 +248,71 @@ header nav {
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+
+.member-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+.member-list .member-item {
+  margin: 5%;
+  padding: 2% 8% 2% 5%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  position: relative;
+  background: transparent;
+}
+
+.member-list .member-item:active {
+  opacity: 0.9;
+}
+
+.member-list .member-item .nickname {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 25px;
+}
+
+.member-list .member-item .remove-icon-wrapper {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  outline: 0;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+.member-list .member-item .remove-icon-wrapper:active {
+  background: #eee;
+}
+
+.member-list .new-item {
+  padding: 2% 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.member-list .member-item .icon-plus {
+  color: white;
+  width: 15px;
+}
+
+.member-list .member-item .new-nickname {
+  background: transparent;
+  border: none;
+  color: white;
+  caret-color: white;
+  outline: 0;
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 25px;
+  width: 100%;
 }
