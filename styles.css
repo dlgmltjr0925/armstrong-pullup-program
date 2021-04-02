@@ -104,6 +104,7 @@ html {
 header nav {
   display: flex;
   justify-content: space-between;
+  padding: 5%;
 }
 
 .day-select-container {
@@ -128,7 +129,7 @@ header nav {
 }
 
 .day-select-container .btn:active {
-  background: #eee;
+  background: #555;
 }
 
 .day-select-container .btn .icon {
@@ -137,10 +138,50 @@ header nav {
   left: 10px;
   width: 20px;
   height: 20p;
+  color: white;
 }
 
 .push-up-container {
-  padding: 5px 10px;
+  padding: 3%;
+}
+
+.push-up-container .push-up-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0 0;
+}
+
+.push-up-container .push-up-item {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.push-up-container .push-up-item.inactive {
+  border: 2px solid #333;
+}
+
+.push-up-container .push-up-item.inactive span {
+  color: #333;
+}
+
+.push-up-container .push-up-item.ready {
+  border: 2px solid #777;
+}
+
+.push-up-container .push-up-item.ready span {
+  color: #777;
+}
+
+.push-up-container .push-up-item.complete {
+  border: 2px solid #fff;
+}
+
+.push-up-container .push-up-item.complete span {
+  color: #fff;
 }
 
 .count-input-container {
@@ -322,4 +363,11 @@ header nav {
   font-size: 25px;
   width: 100%;
   padding: 0;
+}
+
+.category {
+  font-size: 18px;
+  margin-bottom: 7px;
+  font-weight: bold;
+  color: #ccc;
 }

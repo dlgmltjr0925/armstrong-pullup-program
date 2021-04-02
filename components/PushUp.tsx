@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import PushUpItem from './PushUpItem';
+
 interface PushUpProps {
   date: Date;
 }
@@ -10,7 +12,6 @@ interface Record {
 }
 
 const PushUp = ({ date }: PushUpProps) => {
-  console.log(window.screen.width);
   const [records, setRecords] = useState<Record[]>(
     Array.from({ length: 3 }, () => ({
       prev: 0,
@@ -26,10 +27,13 @@ const PushUp = ({ date }: PushUpProps) => {
 
   return (
     <div className='push-up-container'>
-      {records.map(({ prev, count }, index) => {
-        if (count !== 0) return <span key={index}>{count}</span>;
-        else return <button key={index}>{`set${index + 1}`}</button>;
-      })}
+      <p className='category'>Push Up</p>
+      <div className='push-up-wrapper'>
+        {records.map((record, index) => {
+          const isActive = index === 0 || records[index - 1].count !== 0;
+          return <PushUpItem key={index} record={record} isActive={isActive} />;
+        })}
+      </div>
     </div>
   );
 };

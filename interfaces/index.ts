@@ -17,7 +17,7 @@ export interface Data<T> {
 export interface Record {
   id: number;
   date: string; // 20210326
-  type: 'MAX_COUNT' | 'PYRAMID' | 'THREE_GRIP' | 'MAX_SET';
+  type: 'MAX_COUNT' | 'PYRAMID' | 'THREE_GRIP' | 'MAX_SET' | 'PUSH_UP';
   count: number;
   order: number;
 }

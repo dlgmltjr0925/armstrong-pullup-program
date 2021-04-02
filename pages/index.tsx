@@ -27,8 +27,6 @@ const TodayPage = () => {
     if (member.id === 0) router.replace('/login');
   }, [member.id]);
 
-  if (member.id === 0) return null;
-
   const [date, setDate] = useState<Date>(new Date());
 
   const handleClickPrev = useCallback(() => {

@@ -28,7 +28,7 @@ const MemberItem = ({
     (e) => {
       e.stopPropagation();
       try {
-        if (window.confirm('Are you sure you want to delete your profile?')) {
+        if (confirm('Are you sure you want to delete your profile?')) {
           if (onClickDelete) onClickDelete(profile.id);
         }
       } catch (error) {
