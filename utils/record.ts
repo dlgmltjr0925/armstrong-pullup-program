@@ -61,7 +61,23 @@ export const findRecordByDate = ({
 }: FindRecordByDateInput): Record[] => {
   try {
     const recordData = getRecordData(memberId);
-    return recordData.data.filter((record) => record.date === date);
+    return recordData.data.filter(
+      (record) => record.date === date && record.type !== 'PUSH_UP'
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const findPushUpRecordByDate = ({
+  memberId,
+  date,
+}: FindRecordByDateInput): Record[] => {
+  try {
+    const recordData = getRecordData(memberId);
+    return recordData.data.filter(
+      (record) => record.date === date && record.type === 'PUSH_UP'
+    );
   } catch (error) {
     throw error;
   }
