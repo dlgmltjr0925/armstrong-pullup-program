@@ -1,5 +1,7 @@
 export interface CountInputState {
   count: number;
+  onChange?: (count: number) => void;
+  onClickConfirm?: (count: number) => void;
 }
 
 export enum CountInputType {
@@ -16,9 +18,11 @@ const initialState: CountInputState = {
   count: -1,
 };
 
-export const setCountInputAction = (count: number): CountInputAction => ({
+export const setCountInputAction = (
+  payload: CountInputState
+): CountInputAction => ({
   type: CountInputType.SET,
-  payload: { count },
+  payload,
 });
 
 export const resetCountInputAction = (): CountInputAction => ({

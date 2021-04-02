@@ -1,9 +1,9 @@
+import { CountInputState, resetCountInputAction } from '../reducers/countInput';
 import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { CountInputState } from '../reducers/countInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackspace } from '@fortawesome/free-solid-svg-icons';
-import { useSelector } from 'react-redux';
 
 const keyPads = [
   '1',
@@ -21,25 +21,20 @@ const keyPads = [
 ];
 
 const CountInput = () => {
+  const dispatch = useDispatch();
+
   const [count, setCount] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
   const countInput = useSelector(
     ({ countInput }: { countInput: CountInputState }) => countInput
   );
 
-  useEffect(() => {
-    if (countInput.count !== -1) {
-      setCount(countInput.count);
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  }, [countInput]);
+  const { onChange, onClickConfirm } = countInput;
 
   const handleClickIncrease = (isIncrease: boolean) => {
     return () => {
       let newCount = isIncrease ? count + 1 : count - 1;
-      newCount = newCount > 9999 ? 9999 : newCount < 0 ? 0 : newCount;
+      newCount = newCount > 999 ? 999 : newCount < 0 ? 0 : newCount;
       setCount(newCount);
     };
   };
@@ -50,23 +45,49 @@ const CountInput = () => {
         setCount(Math.floor(count / 10));
       } else if (/\d/.test(number)) {
         const newCount = parseInt(count + number, 10);
-        setCount(newCount > 9999 ? 9999 : newCount);
+        setCount(newCount > 999 ? 999 : newCount);
       }
     };
   };
 
+  const handleClickCancel = () => {
+    dispatch(resetCountInputAction());
+  };
+
+  const handleClickOk = () => {
+    if (onClickConfirm) onClickConfirm(count);
+    dispatch(resetCountInputAction());
+  };
+
+  useEffect(() => {
+    if (onChange) onChange(count);
+  }, [count]);
+
+  useEffect(() => {
+    if (countInput.count !== -1) {
+      setCount(countInput.count);
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+  }, [countInput]);
+
   return (
     <div className={`count-input-container${visible ? '' : ' invisible'}`}>
       <div className='count-container'>
-        <button className='btn' onClick={handleClickIncrease(false)}>
-          -
-        </button>
         <div className='count-wrapper'>
-          <span className='count'>{count}</span>
+          <span className={`count${count > 100 ? ' max-length' : ''}`}>
+            {count}
+          </span>
         </div>
-        <button className='btn' onClick={handleClickIncrease(true)}>
-          +
-        </button>
+        <div className='btn-wrapper'>
+          <button className='btn' onClick={handleClickIncrease(true)}>
+            +
+          </button>
+          <button className='btn' onClick={handleClickIncrease(false)}>
+            -
+          </button>
+        </div>
       </div>
 
       <div className='keyboard-wrapper'>
@@ -117,6 +138,10 @@ const CountInput = () => {
               )}
             </button>
           ))}
+        </div>
+        <div className='bottom-wrapper'>
+          <button onClick={handleClickCancel}>Cancel</button>
+          <button onClick={handleClickOk}>OK</button>
         </div>
       </div>
     </div>

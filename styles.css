@@ -176,12 +176,20 @@ header nav {
   color: #777;
 }
 
-.push-up-container .push-up-item.complete {
-  border: 2px solid #fff;
+.push-up-container .push-up-item.not-update {
+  border: 2px solid orange;
 }
 
-.push-up-container .push-up-item.complete span {
-  color: #fff;
+.push-up-container .push-up-item.not-update span {
+  color: orange;
+}
+
+.push-up-container .push-up-item.update {
+  border: 2px solid green;
+}
+
+.push-up-container .push-up-item.update span {
+  color: green;
 }
 
 .count-input-container {
@@ -190,7 +198,7 @@ header nav {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .count-input-container.invisible {
@@ -198,23 +206,42 @@ header nav {
 }
 
 .count-input-container .count-container {
-  display: flex;
   margin-top: 100px;
-  height: 70px;
-  padding: 0 5%;
+  height: 150px;
+  padding: 0 15%;
+  overflow: hidden;
 }
 
 .count-input-container .count-container .count-wrapper {
-  flex: 1;
-  display: inline-block;
+  float: left;
   border: 3px solid #ccc;
-  border-radius: 10px;
-  padding: 10px 15px;
-  text-align: center;
-  margin: 0 5%;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.count-input-container .count-container .btn {
+.count-input-container .count-container .count-wrapper .count {
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.count-input-container .count-container .count-wrapper .count.max-length {
+  font-size: 40px;
+}
+
+.count-input-container .count-container .btn-wrapper {
+  float: right;
+  width: 70px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.count-input-container .count-container .btn-wrapper .btn {
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -227,11 +254,6 @@ header nav {
 
 .count-input-container .count-container .btn:active {
   background: #ddd;
-}
-
-.count-input-container .count-container .count-wrapper .count {
-  font-size: 25px;
-  font-weight: bold;
 }
 
 .count-input-container .keyboard-wrapper {
@@ -255,7 +277,7 @@ header nav {
   background: #eee;
   border: 0;
   outline: 0;
-  margin: 5%;
+  margin: 3%;
   font-size: 25px;
   font-weight: bold;
 }
@@ -281,6 +303,30 @@ header nav {
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+
+.count-input-container .bottom-wrapper {
+  margin-top: 20px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.count-input-container .bottom-wrapper button {
+  flex: 1;
+  margin: 0 3%;
+  outline: 0;
+  background: transparent;
+  color: white;
+  border: 2px solid #ccc;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.count-input-container .bottom-wrapper button:first-child {
+  border-color: #8b0000;
+  color: #8b0000;
 }
 
 .no-drag {

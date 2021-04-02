@@ -62,20 +62,24 @@ const TodayPage = () => {
 
   return (
     <Layout title='Home'>
-      <div className='day-select-container'>
-        <span>{`${dateFormat(date, 'yyyy년 m월 dd일')} (${
-          week[date.getDay()]
-        })`}</span>
-        <div>
-          <button className='btn prev' onClick={handleClickPrev}>
-            <FontAwesomeIcon className='icon' icon={faChevronCircleLeft} />
-          </button>
-          <button className='btn next' onClick={handleClickNext}>
-            <FontAwesomeIcon className='icon' icon={faChevronCircleRight} />
-          </button>
-        </div>
-      </div>
-      <WeekComponent date={date} />
+      {member.id !== 0 && (
+        <>
+          <div className='day-select-container'>
+            <span>{`${dateFormat(date, 'yyyy년 m월 dd일')} (${
+              week[date.getDay()]
+            })`}</span>
+            <div>
+              <button className='btn prev' onClick={handleClickPrev}>
+                <FontAwesomeIcon className='icon' icon={faChevronCircleLeft} />
+              </button>
+              <button className='btn next' onClick={handleClickNext}>
+                <FontAwesomeIcon className='icon' icon={faChevronCircleRight} />
+              </button>
+            </div>
+          </div>
+          <WeekComponent date={date} />
+        </>
+      )}
     </Layout>
   );
 };
