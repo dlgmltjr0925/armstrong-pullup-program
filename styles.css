@@ -652,3 +652,20 @@ header nav {
 .record-container .friday-wrapper .btn-friday-item:active {
   background: #333;
 }
+
+.holiday-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20%;
+}
+
+.holiday-container .icon {
+  width: 50%;
+}
+
+.holiday-container p {
+  font-size: 15px;
+  color: #ccc;
+  margin-top: 40px;
+}
