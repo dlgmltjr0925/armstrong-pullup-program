@@ -457,6 +457,26 @@ header nav {
   color: #ccc;
 }
 
+.wednesday-wrapper {
+  align-items: center;
+  margin-bottom: 5%;
+}
+
+.wednesday-wrapper .sub-category {
+  flex: 1;
+  font-size: 16px;
+  margin-bottom: 7px;
+  font-weight: bold;
+  color: #ccc;
+  margin-top: 5%;
+}
+
+.wednesday-wrapper .sub-record-wrapper {
+  flex: 1.5;
+  display: flex;
+  justify-content: space-between;
+}
+
 .record-container {
   padding: 3%;
 }
@@ -470,7 +490,8 @@ header nav {
   display: flex;
 }
 
-.record-container .monday-wrapper {
+.record-container .monday-wrapper,
+.wednesday-wrapper {
   justify-content: space-around;
 }
 
@@ -560,6 +581,7 @@ header nav {
 
 .record-container .btn-status .btn-status-excersize {
   font-size: 30px;
+  text-align: center;
 }
 
 .recording-container .btn-describe {

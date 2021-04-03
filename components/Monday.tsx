@@ -49,9 +49,12 @@ const Monday = ({ date }: MondayProps) => {
   }, []);
 
   const handleClickRest = useCallback(() => {
-    const timeOut = new Date();
-    timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
-    setTimeOut(timeOut);
+    let timeOut = undefined;
+    if (currentOrder !== 4) {
+      timeOut = new Date();
+      timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
+      setTimeOut(timeOut);
+    }
     dispatch(
       setCountInputAction({
         count: records[currentOrder].count,
@@ -65,23 +68,12 @@ const Monday = ({ date }: MondayProps) => {
         },
       })
     );
-    setStatus('REST');
+    setStatus(currentOrder !== 4 ? 'REST' : 'COMPLETE');
   }, [records, currentOrder]);
 
   const handleEndTimer = useCallback(async () => {
-    const newRecords = [...records];
-    newRecords[currentOrder].isDone = true;
-    if (newRecords[currentOrder + 1]?.count === 0) {
-      newRecords[currentOrder + 1].count = newRecords[currentOrder].count;
-    }
-    setRecords(newRecords);
-    const index = newRecords.findIndex(({ isDone }) => !isDone);
-    if (index === -1) {
-      setStatus('COMPLETE');
-    } else {
-      setStatus('EXERCISING');
-    }
-  }, [currentOrder, records]);
+    setStatus('EXERCISING');
+  }, []);
 
   const getRecords = useCallback(async () => {
     const newRecords = getInitialRecords();
