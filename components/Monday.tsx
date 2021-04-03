@@ -1,12 +1,13 @@
 import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import PushUp from './PushUp';
 import RecordItem from './RecordItem';
 import Timer from './Timer';
 import axios from 'axios';
 import dateFormat from 'dateformat';
-import { useSelector } from 'react-redux';
+import { setCountInputAction } from '../reducers/countInput';
 
 interface MondayRecord {
   id?: number;
@@ -32,8 +33,11 @@ const getInitialRecords = (): MondayRecord[] =>
 
 const Monday = ({ date }: MondayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
-  const [status, setStatus] = useState<Status>('READY');
+  const dispatch = useDispatch();
+
+  const [status, setStatus] = useState<Status>('INITIAL');
   const [records, setRecords] = useState<MondayRecord[]>(getInitialRecords());
+  const [timeOut, setTimeOut] = useState<Date>(new Date());
 
   const currentOrder = useMemo(
     () => records.findIndex(({ isDone }) => !isDone),
@@ -45,8 +49,24 @@ const Monday = ({ date }: MondayProps) => {
   }, []);
 
   const handleClickRest = useCallback(() => {
+    const timeOut = new Date();
+    timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
+    setTimeOut(timeOut);
+    dispatch(
+      setCountInputAction({
+        count: records[currentOrder].count,
+        timeOut,
+        onClickConfirm: (count: number) => {
+          const newRecords = [...records];
+          newRecords[currentOrder].count = count;
+          newRecords[currentOrder].isDone = true;
+          if (currentOrder !== 4) newRecords[currentOrder + 1].count = count;
+          setRecords(newRecords);
+        },
+      })
+    );
     setStatus('REST');
-  }, []);
+  }, [records, currentOrder]);
 
   const handleEndTimer = useCallback(async () => {
     const newRecords = [...records];
@@ -62,16 +82,6 @@ const Monday = ({ date }: MondayProps) => {
       setStatus('EXERCISING');
     }
   }, [currentOrder, records]);
-
-  const handleChangeCount = useCallback(
-    async (e) => {
-      const count = parseInt(e.target.value, 10);
-      const newRecords = [...records];
-      newRecords[currentOrder].count = isNaN(count) ? 0 : count;
-      setRecords(newRecords);
-    },
-    [currentOrder, records]
-  );
 
   const getRecords = useCallback(async () => {
     const newRecords = getInitialRecords();
@@ -102,7 +112,6 @@ const Monday = ({ date }: MondayProps) => {
           newRecords[index].isSaved = true;
         });
         if (records.length === 5) setStatus('COMPLETE');
-        else if (records.length > 0) setStatus('EXERCISING');
         else setStatus('READY');
       }
 
@@ -200,31 +209,34 @@ const Monday = ({ date }: MondayProps) => {
         </div>
         {status === 'READY' && (
           <div className='btn-start-wrapper'>
-            <button className='btn-start' onClick={handleClickReady}>
-              시 작
+            <button className='btn-start no-drag' onClick={handleClickReady}>
+              {currentOrder === 0 ? 'Start' : 'Resume'}
             </button>
           </div>
         )}
       </div>
+      {(status === 'EXERCISING' || status === 'REST') && (
+        <div className='recording-container record-container'>
+          <h1 className='category'>풀업 5세트</h1>
+          <p className='describe'>최대 반복 횟수, 쉬는 시간 : 90초</p>
+          <div className='record-wrapper monday-wrapper'>
+            {records.map((record, index) => {
+              return <RecordItem key={index} item={record} />;
+            })}
+          </div>
+          {status === 'REST' ? (
+            <div className='btn-status timer-wrapper'>
+              <Timer timeOut={timeOut} onEnd={handleEndTimer} />
+            </div>
+          ) : (
+            <>
+              <div className='btn-status' onClick={handleClickRest}>
+                <p className='btn-status-excersize'>Pulling Up</p>
+              </div>
 
-      {status === 'EXERCISING' && (
-        <>
-          <p>운동 중</p>
-          <button onClick={handleClickRest}>휴식</button>
-        </>
-      )}
-      {status === 'REST' && (
-        <div>
-          휴식 <Timer time={REST_TIME} onEnd={handleEndTimer} /> 초
-          <p>
-            개수
-            <input
-              type='text'
-              pattern='\d*'
-              value={records[currentOrder].count}
-              onChange={handleChangeCount}
-            />
-          </p>
+              <p className='btn-describe'>세트가 끝나면 누르세요</p>
+            </>
+          )}
         </div>
       )}
     </div>

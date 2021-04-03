@@ -105,7 +105,7 @@ html {
 header nav {
   display: flex;
   justify-content: space-between;
-  padding: 5%;
+  padding: 5% 5% 0;
   position: fixed;
   top: 0;
   left: 0;
@@ -219,8 +219,8 @@ header nav {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 2;
+  background: #1f2023;
+  z-index: 3;
 }
 
 .count-input-container.invisible {
@@ -344,11 +344,28 @@ header nav {
   font-weight: bold;
   font-size: 16px;
   border-radius: 5px;
+  position: relative;
 }
 
 .count-input-container .bottom-wrapper button:first-child {
   border-color: #8b0000;
   color: #8b0000;
+}
+
+.count-input-container .bottom-wrapper button .timer {
+  position: absolute;
+  display: flex;
+  right: 5px;
+  bottom: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid yellowgreen;
+  color: yellowgreen;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
 }
 
 .no-drag {
@@ -510,10 +527,61 @@ header nav {
   background: transparent;
   border: 3px solid #ccc;
   color: white;
-  font-size: 35px;
+  font-size: 28px;
   outline: 0;
 }
 
 .monday-container .btn-start-wrapper .btn-start:active {
   background: #333;
+}
+
+.recording-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  background: #1f2023;
+  padding: 5%;
+}
+
+.record-container .btn-status {
+  position: relative;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  margin: 100px auto 40px;
+  overflow: hidden;
+}
+
+.record-container .btn-status .btn-status-excersize {
+  font-size: 30px;
+}
+
+.recording-container .btn-describe {
+  color: #aaa;
+  font-size: 14px;
+  text-align: center;
+}
+
+.record-container .btn-status.timer-wrapper {
+  position: relative;
+}
+
+.record-container .btn-status.timer-wrapper span {
+  font-size: 70px;
+}
+
+.record-container .btn-status.timer-wrapper span::after {
+  position: absolute;
+  right: 30px;
+  bottom: 55px;
+  content: ' s';
+  font-size: 40px;
 }

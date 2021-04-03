@@ -1,5 +1,6 @@
 export interface CountInputState {
   count: number;
+  timeOut?: Date;
   onChange?: (count: number) => void;
   onClickConfirm?: (count: number) => void;
 }

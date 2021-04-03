@@ -22,4 +22,4 @@ export interface Record {
   order: number;
 }
 
-export type Status = 'READY' | 'EXERCISING' | 'REST' | 'COMPLETE';
+export type Status = 'INITIAL' | 'READY' | 'EXERCISING' | 'REST' | 'COMPLETE';

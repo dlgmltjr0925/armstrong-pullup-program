@@ -1,6 +1,6 @@
 import { CountInputState, resetCountInputAction } from '../reducers/countInput';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackspace } from '@fortawesome/free-solid-svg-icons';
@@ -21,15 +21,21 @@ const keyPads = [
 ];
 
 const CountInput = () => {
+  const countInput = useSelector(
+    ({ countInput }: { countInput: CountInputState }) => countInput
+  );
   const dispatch = useDispatch();
 
   const [count, setCount] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
-  const countInput = useSelector(
-    ({ countInput }: { countInput: CountInputState }) => countInput
-  );
+  const [now, setNow] = useState<Date>(new Date());
 
-  const { onChange, onClickConfirm } = countInput;
+  const { onChange, onClickConfirm, timeOut } = countInput;
+
+  const timer = useMemo(() => {
+    if (!timeOut) return null;
+    return Math.max(Math.floor((timeOut.valueOf() - now.valueOf()) / 1000), 0);
+  }, [timeOut, now]);
 
   const handleClickIncrease = (isIncrease: boolean) => {
     return () => {
@@ -60,16 +66,33 @@ const CountInput = () => {
   };
 
   useEffect(() => {
+    if (timer === 0) handleClickOk();
+  }, [timer]);
+
+  useEffect(() => {
     if (onChange) onChange(count);
   }, [count]);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
     if (countInput.count !== -1) {
+      if (countInput.timeOut) {
+        setNow(new Date());
+        interval = setInterval(() => {
+          setNow(new Date());
+        }, 1000);
+      }
       setCount(countInput.count);
       setVisible(true);
     } else {
       setVisible(false);
     }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
   }, [countInput]);
 
   return (
@@ -141,7 +164,10 @@ const CountInput = () => {
         </div>
         <div className='bottom-wrapper'>
           <button onClick={handleClickCancel}>Cancel</button>
-          <button onClick={handleClickOk}>OK</button>
+          <button onClick={handleClickOk}>
+            OK
+            {!!timer && <span className='timer'>{timer}</span>}
+          </button>
         </div>
       </div>
     </div>
