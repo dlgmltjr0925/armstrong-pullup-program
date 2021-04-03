@@ -1,11 +1,13 @@
 import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import PushUp from './PushUp';
+import RecordItem from './RecordItem';
 import Timer from './Timer';
 import axios from 'axios';
 import dateFormat from 'dateformat';
-import { useSelector } from 'react-redux';
+import { setCountInputAction } from '../reducers/countInput';
 
 interface TuesdayProps {
   date: Date;
@@ -23,17 +25,18 @@ const REST_TIME_RATIO = 10; // 10 s
 
 const Tuesday = ({ date }: TuesdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
-  const [status, setStatus] = useState<Status>('READY');
+  const dispatch = useDispatch();
+
+  const [status, setStatus] = useState<Status>('INITIAL');
   const [records, setRecords] = useState<TuesdayRecord[]>([]);
   const [lastWeekMax, setLastWeekMax] = useState<number>(0);
+  const [timeOut, setTimeOut] = useState<Date>(new Date());
 
   const currentOrder = useMemo(() => records.length, [records]);
 
-  const [isFailed, restTime] = useMemo(() => {
+  const isFailed = useMemo(() => {
     const index = records.findIndex(({ isSuccessed }) => !isSuccessed);
-    const isFailed = index !== -1;
-    const restTime = index === -1 ? records.length : index;
-    return [isFailed, restTime * REST_TIME_RATIO];
+    return index !== -1;
   }, [records]);
 
   const handleClickReady = useCallback(() => {
@@ -41,7 +44,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
   }, []);
 
   const handleClickSuccess = useCallback(() => {
-    setRecords([
+    const newRecord = [
       ...records,
       {
         count: records.length + 1,
@@ -49,55 +52,77 @@ const Tuesday = ({ date }: TuesdayProps) => {
         isDone: true,
         isSaved: false,
       },
-    ]);
+    ];
+    const index = newRecord.findIndex(({ isSuccessed }) => !isSuccessed);
+    const restTime = index === -1 ? newRecord.length : index;
+    const timeOut = new Date();
+    timeOut.setSeconds(timeOut.getSeconds() + restTime * REST_TIME_RATIO);
+    setTimeOut(timeOut);
+    setRecords(newRecord);
     setStatus('REST');
   }, [records]);
 
   const handleClickFail = useCallback(() => {
-    setRecords([
+    const newRecords = [
       ...records,
       {
         count: records.length,
         isSuccessed: false,
-        isDone: true,
+        isDone: false,
         isSaved: false,
       },
-    ]);
+    ];
+    const index = records.length;
+    const timeOut = new Date();
+    timeOut.setSeconds(timeOut.getSeconds() + index * REST_TIME_RATIO);
+    setTimeOut(timeOut);
+    dispatch(
+      setCountInputAction({
+        count: records.length,
+        max: records.length,
+        timeOut,
+        onClickConfirm: (count: number) => {
+          newRecords[index].count = count;
+          newRecords[index].isDone = true;
+          newRecords[index].isSaved = false;
+          setRecords(newRecords);
+        },
+      })
+    );
     setStatus('REST');
-  }, [records]);
+  }, [records, timeOut, dispatch]);
 
   const handleClickFinish = useCallback(() => {
+    if (!isFailed) return;
+    let index = records.findIndex(({ isSuccessed }) => !isSuccessed) - 1;
+    const newRecords = [
+      ...records,
+      {
+        count: records[index].count,
+        isSuccessed: false,
+        isDone: false,
+        isSaved: false,
+      },
+    ];
+    index = records.length;
+    dispatch(
+      setCountInputAction({
+        count: records.length - 1,
+        max: records.length - 1,
+        onClickConfirm: (count: number) => {
+          newRecords[index].count = count;
+          newRecords[index].isDone = true;
+          newRecords[index].isSaved = false;
+          setRecords(newRecords);
+        },
+      })
+    );
     setStatus('COMPLETE');
-  }, []);
+  }, [records, timeOut, dispatch]);
 
   const handleEndTimer = useCallback(() => {
-    if (isFailed) {
-      const { length } = records;
-      setRecords([
-        ...records,
-        {
-          ...records[length - 1],
-          isSuccessed: false,
-          isSaved: false,
-        },
-      ]);
-    }
     setStatus('EXERCISING');
   }, [isFailed]);
-
-  const handleChangeCount = useCallback(
-    async (e) => {
-      const max = records.findIndex(({ isSuccessed }) => !isSuccessed);
-      const count = parseInt(e.target.value, 10);
-      const newCounts = [...records];
-      newCounts[currentOrder - 1].count = isNaN(count)
-        ? 0
-        : Math.min(count, max);
-      newCounts[currentOrder - 1].isSaved = false;
-      setRecords(newCounts);
-    },
-    [currentOrder, records]
-  );
 
   const getRecords = useCallback(async () => {
     try {
@@ -128,7 +153,6 @@ const Tuesday = ({ date }: TuesdayProps) => {
         const failCount = newRecords.filter(({ isSuccessed }) => !isSuccessed)
           .length;
         if (failCount === 2) setStatus('COMPLETE');
-        else if (records.length > 0) setStatus('EXERCISING');
         else setStatus('READY');
         setRecords(newRecords);
       }
@@ -179,7 +203,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
           if (!isDone || isSaved) return null;
           const newRecord: Omit<Record, 'id'> = {
             date: dateFormat(date, 'yyyymmdd'),
-            type: 'MAX_COUNT',
+            type: 'PYRAMID',
             count,
             order: index + 1,
           };
@@ -212,52 +236,65 @@ const Tuesday = ({ date }: TuesdayProps) => {
     getRecords();
   }, [date]);
 
+  console.log(status);
   return (
     <div>
       <PushUp date={date} />
-      <p>Pyramid</p>
-      {records.map((record, index) => {
-        return (
-          <span key={index}>{`${record.count} [${
-            record.isSaved ? 'saved' : ''
-          }] `}</span>
-        );
-      })}
-      {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
-      {status === 'EXERCISING' && (
-        <>
-          <p>운동 중</p>
-          {!isFailed ? (
-            <>
-              <button onClick={handleClickSuccess}>성공</button>
-              <button onClick={handleClickFail}>실패</button>
-            </>
+      <div id='record' className='record-container'>
+        <h1 className='category'>피라미드 루틴</h1>
+        <p className='describe'>세트당 1회씩 증가</p>
+        <div className='record-wrapper tuesday-wrapper'>
+          {records.map((record, index) => (
+            <RecordItem key={index} item={record} />
+          ))}
+        </div>
+        {status === 'READY' && (
+          <div className='btn-start-wrapper'>
+            <button className='btn-start no-drag' onClick={handleClickReady}>
+              {currentOrder === 0 ? 'Start' : 'Resume'}
+            </button>
+          </div>
+        )}
+      </div>
+      {(status === 'EXERCISING' || status === 'REST') && (
+        <div className='recording-container record-container'>
+          <h1 className='category'>피라미드 루틴</h1>
+          <p className='describe'>세트당 1회씩 증가</p>
+          <div className='record-wrapper tuesday-wrapper'>
+            {records.map((record, index) => {
+              return <RecordItem key={index} item={record} />;
+            })}
+          </div>
+          {status === 'REST' ? (
+            <div className='btn-status timer-wrapper'>
+              <Timer timeOut={timeOut} onEnd={handleEndTimer} />
+            </div>
           ) : (
             <>
-              <input
-                type='text'
-                pattern='\d*'
-                value={records[currentOrder - 1].count}
-                onChange={handleChangeCount}
-              />
-              <button onClick={handleClickFinish}>종료</button>
+              <div className='btn-status' onClick={handleClickFinish}>
+                <p className='btn-status-excersize'>Pulling Up</p>
+                {!isFailed && (
+                  <>
+                    <div className='btn btn-fail' onClick={handleClickFail}>
+                      실패
+                    </div>
+                    <div
+                      className='btn btn-success'
+                      onClick={handleClickSuccess}
+                    >
+                      성공
+                    </div>
+                  </>
+                )}
+              </div>
+              {isFailed ? (
+                <p className='btn-describe'>세트가 끝나면 누르세요</p>
+              ) : (
+                <p className='btn-describe'>
+                  {`${currentOrder + 1}회 성공하셨나요?`}
+                </p>
+              )}
             </>
-          )}
-        </>
-      )}
-      {status === 'REST' && (
-        <div>
-          휴식 <Timer time={restTime} onEnd={handleEndTimer} /> 초
-          {isFailed && (
-            <p>
-              개수
-              <input
-                type='text'
-                pattern='\d*'
-                value={records[currentOrder - 1].count}
-                onChange={handleChangeCount}
-              />
-            </p>
           )}
         </div>
       )}

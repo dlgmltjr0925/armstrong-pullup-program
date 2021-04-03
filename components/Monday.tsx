@@ -197,7 +197,7 @@ const Monday = ({ date }: MondayProps) => {
   }, [date]);
 
   return (
-    <div className='monday-container'>
+    <div>
       <PushUp date={date} />
       <div id='record' className='record-container'>
         <h1 className='category'>풀업 5세트</h1>

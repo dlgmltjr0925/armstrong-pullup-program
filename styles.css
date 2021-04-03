@@ -468,12 +468,14 @@ header nav {
 
 .record-container .record-wrapper {
   display: flex;
-  flex-wrap: wrap;
 }
 
 .record-container .monday-wrapper {
-  flex-wrap: nowrap;
   justify-content: space-around;
+}
+
+.record-container .tuesday-wrapper {
+  flex-wrap: wrap;
 }
 
 .record-container .record-wrapper .record-item {
@@ -484,7 +486,7 @@ header nav {
   height: 45px;
   border-radius: 50%;
   border: 1px solid #ccc;
-  margin: 5% 5% 5% 0;
+  margin: 5% 5% 0 0;
 }
 
 .record-container .record-wrapper .record-item.ready {
@@ -511,16 +513,13 @@ header nav {
   color: green;
 }
 
-.monday-container {
-}
-
-.monday-container .btn-start-wrapper {
+.record-container .btn-start-wrapper {
   display: flex;
   justify-content: center;
   margin-top: 50px;
 }
 
-.monday-container .btn-start-wrapper .btn-start {
+.record-container .btn-start-wrapper .btn-start {
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -531,7 +530,7 @@ header nav {
   outline: 0;
 }
 
-.monday-container .btn-start-wrapper .btn-start:active {
+.record-container .btn-start-wrapper .btn-start:active {
   background: #333;
 }
 
@@ -557,7 +556,6 @@ header nav {
   border-radius: 50%;
   border: 3px solid #ccc;
   margin: 100px auto 40px;
-  overflow: hidden;
 }
 
 .record-container .btn-status .btn-status-excersize {
@@ -568,6 +566,7 @@ header nav {
   color: #aaa;
   font-size: 14px;
   text-align: center;
+  margin-top: 50px;
 }
 
 .record-container .btn-status.timer-wrapper {
@@ -584,4 +583,27 @@ header nav {
   bottom: 55px;
   content: ' s';
   font-size: 40px;
+}
+
+.record-container .btn-status .btn {
+  position: absolute;
+  display: flex;
+  bottom: -40px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  background: #1f2023;
+  font-size: 17px;
+}
+
+.record-container .btn-status .btn-fail {
+  left: -20px;
+  border: 2px solid #8b0000;
+}
+
+.record-container .btn-status .btn-success {
+  right: -20px;
+  border: 2px solid green;
 }

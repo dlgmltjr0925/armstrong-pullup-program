@@ -30,7 +30,7 @@ const CountInput = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [now, setNow] = useState<Date>(new Date());
 
-  const { onChange, onClickConfirm, timeOut } = countInput;
+  const { onChange, onClickConfirm, timeOut, max = 999 } = countInput;
 
   const timer = useMemo(() => {
     if (!timeOut) return null;
@@ -40,7 +40,7 @@ const CountInput = () => {
   const handleClickIncrease = (isIncrease: boolean) => {
     return () => {
       let newCount = isIncrease ? count + 1 : count - 1;
-      newCount = newCount > 999 ? 999 : newCount < 0 ? 0 : newCount;
+      newCount = newCount > max ? max : newCount < 0 ? 0 : newCount;
       setCount(newCount);
     };
   };
@@ -51,7 +51,7 @@ const CountInput = () => {
         setCount(Math.floor(count / 10));
       } else if (/\d/.test(number)) {
         const newCount = parseInt(count + number, 10);
-        setCount(newCount > 999 ? 999 : newCount);
+        setCount(newCount > max ? max : newCount);
       }
     };
   };
