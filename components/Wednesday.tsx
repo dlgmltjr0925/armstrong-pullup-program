@@ -213,7 +213,6 @@ const Wednesday = ({ date }: WednesdayProps) => {
 
   return (
     <div>
-      <PushUp date={date} />
       <div id='record' className='record-container'>
         <h1 className='category'>3그립</h1>
         <p className='describe'>

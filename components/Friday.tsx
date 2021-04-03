@@ -68,17 +68,35 @@ const Friday = ({ date }: FridayProps) => {
         return Thursday;
       default:
         return () => (
-          <div>
-            <button onClick={handleClickClass(1)}>Max Count</button>
-            <button onClick={handleClickClass(2)}>Pyramid</button>
-            <button onClick={handleClickClass(3)}>Three Grip</button>
-            <button onClick={handleClickClass(4)}>Max Set</button>
+          <div id='record' className='record-container'>
+            <h1 className='category'>복습</h1>
+            <p className='describe'>루틴 중 가장 힘들었던 날의 루틴을 실시</p>
+            <div className='friday-wrapper'>
+              <div className='btn-friday-item' onClick={handleClickClass(1)}>
+                풀업 5세트
+              </div>
+              <div className='btn-friday-item' onClick={handleClickClass(2)}>
+                피라미드 루틴
+              </div>
+            </div>
+            <div className='friday-wrapper'>
+              <div className='btn-friday-item' onClick={handleClickClass(3)}>
+                3그립
+              </div>
+              <div className='btn-friday-item' onClick={handleClickClass(4)}>
+                최대 세트수
+              </div>
+            </div>
           </div>
         );
     }
   }, [dayOfWeek]);
 
-  return <WeekComponent date={date} />;
+  return (
+    <div>
+      <WeekComponent date={date} />
+    </div>
+  );
 };
 
 export default Friday;

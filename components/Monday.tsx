@@ -190,7 +190,6 @@ const Monday = ({ date }: MondayProps) => {
 
   return (
     <div>
-      <PushUp date={date} />
       <div id='record' className='record-container'>
         <h1 className='category'>풀업 5세트</h1>
         <p className='describe'>최대 반복 횟수, 쉬는 시간 : 90초</p>

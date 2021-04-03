@@ -237,7 +237,6 @@ const Tuesday = ({ date }: TuesdayProps) => {
 
   return (
     <div>
-      <PushUp date={date} />
       <div id='record' className='record-container'>
         <h1 className='category'>피라미드 루틴</h1>
         <p className='describe'>세트당 1회씩 증가</p>

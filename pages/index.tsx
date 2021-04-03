@@ -10,6 +10,7 @@ import Holiday from '../components/Holiday';
 import Layout from '../components/Layout';
 import { MemberState } from '../reducers/member';
 import Monday from '../components/Monday';
+import PushUp from '../components/PushUp';
 import Thursday from '../components/Thursday';
 import Tuesday from '../components/Tuesday';
 import Wednesday from '../components/Wednesday';
@@ -86,6 +87,7 @@ const TodayPage = () => {
             </div>
           </div>
           <div className='week-container'>
+            {dayOfWeek !== 0 && dayOfWeek !== 6 && <PushUp date={date} />}
             <WeekComponent date={date} />
           </div>
         </>

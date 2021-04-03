@@ -629,3 +629,26 @@ header nav {
   right: -20px;
   border: 2px solid green;
 }
+
+.record-container .friday-wrapper {
+  display: flex;
+  height: 100px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.record-container .friday-wrapper .btn-friday-item {
+  display: flex;
+  flex: 1;
+  height: 70px;
+  border: 1px solid #ccc;
+  margin: 3%;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.record-container .friday-wrapper .btn-friday-item:active {
+  background: #333;
+}

@@ -204,7 +204,6 @@ const Thursday = ({ date }: ThursdayProps) => {
 
   return (
     <div>
-      <PushUp date={date} />
       <div id='record' className='record-container'>
         <h1 className='category'>최대 세트수 도전</h1>
         <p className='describe'>
@@ -226,7 +225,7 @@ const Thursday = ({ date }: ThursdayProps) => {
       </div>
       {(status === 'EXERCISING' || status === 'REST') && (
         <div className='recording-container record-container'>
-          <h1 className='category'>최대 세트수 도전</h1>
+          <h1 className='category'>최대 세트수</h1>
           <p className='describe'>
             수요일 반복 횟수로 실패 세트가 나올때까지 실시
           </p>
