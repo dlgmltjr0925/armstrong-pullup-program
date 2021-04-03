@@ -2,6 +2,7 @@ import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import PushUp from './PushUp';
+import RecordItem from './RecordItem';
 import Timer from './Timer';
 import axios from 'axios';
 import dateFormat from 'dateformat';
@@ -9,6 +10,7 @@ import { useSelector } from 'react-redux';
 
 interface MondayRecord {
   id?: number;
+  prev: number;
   count: number;
   isDone: boolean;
   isSaved: boolean;
@@ -20,8 +22,9 @@ interface MondayProps {
 
 const REST_TIME = 90; // 90s
 
-const getInitialRecords = () =>
+const getInitialRecords = (): MondayRecord[] =>
   Array.from({ length: 5 }, () => ({
+    prev: 0,
     count: 0,
     isDone: false,
     isSaved: false,
@@ -48,6 +51,9 @@ const Monday = ({ date }: MondayProps) => {
   const handleEndTimer = useCallback(async () => {
     const newRecords = [...records];
     newRecords[currentOrder].isDone = true;
+    if (newRecords[currentOrder + 1]?.count === 0) {
+      newRecords[currentOrder + 1].count = newRecords[currentOrder].count;
+    }
     setRecords(newRecords);
     const index = newRecords.findIndex(({ isDone }) => !isDone);
     if (index === -1) {
@@ -79,6 +85,7 @@ const Monday = ({ date }: MondayProps) => {
         const { records } = res.data;
         records.forEach(({ order, count }: Record) => {
           const index = order - 1;
+          newRecords[index].prev = count;
           newRecords[index].count = count;
         });
       }
@@ -181,18 +188,25 @@ const Monday = ({ date }: MondayProps) => {
   }, [date]);
 
   return (
-    <div>
+    <div className='monday-container'>
       <PushUp date={date} />
-      <p>Max 5 Set </p>
-      {records.map(({ count, isDone, isSaved }, index) => {
-        return !isDone ? null : (
-          <div key={index}>
-            <span>{count}</span>
-            {isSaved && <span>saved</span>}
+      <div id='record' className='record-container'>
+        <h1 className='category'>풀업 5세트</h1>
+        <p className='describe'>최대 반복 횟수, 쉬는 시간 : 90초</p>
+        <div className='record-wrapper monday-wrapper'>
+          {records.map((record, index) => {
+            return <RecordItem key={index} item={record} />;
+          })}
+        </div>
+        {status === 'READY' && (
+          <div className='btn-start-wrapper'>
+            <button className='btn-start' onClick={handleClickReady}>
+              시 작
+            </button>
           </div>
-        );
-      })}
-      {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
+        )}
+      </div>
+
       {status === 'EXERCISING' && (
         <>
           <p>운동 중</p>

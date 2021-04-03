@@ -1,6 +1,6 @@
 import { CountInputState, resetCountInputAction } from '../reducers/countInput';
-import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackspace } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@ const CountInput = () => {
   const dispatch = useDispatch();
 
   const [count, setCount] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(false);
   const countInput = useSelector(
     ({ countInput }: { countInput: CountInputState }) => countInput
   );

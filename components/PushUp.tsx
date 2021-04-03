@@ -86,6 +86,7 @@ const PushUp = ({ date }: PushUpProps) => {
             newRecords[index].isDone = true;
             newRecords[index].isSaved = false;
             setRecords(newRecords);
+            if (index !== 2) newRecords[index + 1].count = count;
           },
         })
       );

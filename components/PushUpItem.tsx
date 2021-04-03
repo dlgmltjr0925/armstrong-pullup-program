@@ -3,6 +3,7 @@ import { DetailedHTMLProps, HTMLAttributes, useMemo } from 'react';
 interface Record {
   prev: number;
   count: number;
+  isDone: boolean;
   isSaved: boolean;
 }
 
@@ -13,14 +14,14 @@ interface PushUpItemProps
 }
 
 const PushUpItem = ({ record, isActive, ...props }: PushUpItemProps) => {
-  const { prev, count, isSaved } = record;
+  const { count, isDone, isSaved } = record;
 
   const cn = useMemo<string>(() => {
     if (!isActive) return 'inactive';
-    else if (count === 0) return 'ready';
+    else if (!isDone) return 'ready';
     else if (!isSaved) return 'not-update';
-    else return 'update';
-  }, [count, isActive, isSaved]);
+    else return 'complete';
+  }, [isDone, isActive, isSaved]);
 
   return (
     <div className={`push-up-item no-drag ${cn}`} {...props}>

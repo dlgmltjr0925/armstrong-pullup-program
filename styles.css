@@ -99,29 +99,46 @@ html {
   background: #1f2023;
   min-width: 100vw;
   min-height: 100vh;
+  font-size: 13px;
 }
 
 header nav {
   display: flex;
   justify-content: space-between;
   padding: 5%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #1f2023;
+  z-index: 1;
 }
 
 .day-select-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
+  align-items: flex-end;
   padding: 0 10px;
   font-weight: bold;
   font-size: 20px;
+  height: 90px;
+  background: #1f2023;
+}
+
+.day-select-container .day-select-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .day-select-container .btn {
   position: relative;
   width: 40px;
   height: 40px;
-  margin-right: 10px;
   background: none;
   border-radius: 50%;
   border: 0;
@@ -141,8 +158,12 @@ header nav {
   color: white;
 }
 
+.week-container {
+  padding-top: 90px;
+}
+
 .push-up-container {
-  padding: 3%;
+  padding: 3% 3% 7%;
 }
 
 .push-up-container .push-up-wrapper {
@@ -184,11 +205,11 @@ header nav {
   color: orange;
 }
 
-.push-up-container .push-up-item.update {
+.push-up-container .push-up-item.complete {
   border: 2px solid green;
 }
 
-.push-up-container .push-up-item.update span {
+.push-up-container .push-up-item.complete span {
   color: green;
 }
 
@@ -199,6 +220,7 @@ header nav {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.9);
+  z-index: 2;
 }
 
 .count-input-container.invisible {
@@ -206,7 +228,7 @@ header nav {
 }
 
 .count-input-container .count-container {
-  margin-top: 100px;
+  margin-top: 80px;
   height: 150px;
   padding: 0 15%;
   overflow: hidden;
@@ -416,4 +438,82 @@ header nav {
   margin-bottom: 7px;
   font-weight: bold;
   color: #ccc;
+}
+
+.record-container {
+  padding: 3%;
+}
+
+.record-container .describe {
+  font-size: 15px;
+  color: #aaa;
+}
+
+.record-container .record-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.record-container .monday-wrapper {
+  flex-wrap: nowrap;
+  justify-content: space-around;
+}
+
+.record-container .record-wrapper .record-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin: 5% 5% 5% 0;
+}
+
+.record-container .record-wrapper .record-item.ready {
+  border: 2px solid #777;
+}
+
+.record-container .record-wrapper .record-item.ready span {
+  color: #777;
+}
+
+.record-container .record-wrapper .record-item.not-update {
+  border: 2px solid orange;
+}
+
+.record-container .record-wrapper .record-item.not-update span {
+  color: orange;
+}
+
+.record-container .record-wrapper .record-item.complete {
+  border: 2px solid green;
+}
+
+.record-container .record-wrapper .record-item.complete span {
+  color: green;
+}
+
+.monday-container {
+}
+
+.monday-container .btn-start-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.monday-container .btn-start-wrapper .btn-start {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: transparent;
+  border: 3px solid #ccc;
+  color: white;
+  font-size: 35px;
+  outline: 0;
+}
+
+.monday-container .btn-start-wrapper .btn-start:active {
+  background: #333;
 }
