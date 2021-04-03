@@ -215,8 +215,10 @@ const Wednesday = ({ date }: WednesdayProps) => {
     <div>
       <PushUp date={date} />
       <div id='record' className='record-container'>
-        <h1 className='category'>3그립 3세트(풀업, 친업, 와이드 풀업)</h1>
-        <p className='describe'>쉬는 시간 : 60초</p>
+        <h1 className='category'>3그립</h1>
+        <p className='describe'>
+          풀업, 친업, 와이드 풀업을 각 3세트, 쉬는 시간 : 60초
+        </p>
         <div className='record-wrapper wednesday-wrapper'>
           <p className='sub-category'>Pull Up</p>
           <div className='sub-record-wrapper'>

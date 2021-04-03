@@ -1,11 +1,13 @@
 import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import PushUp from './PushUp';
+import RecordItem from './RecordItem';
 import Timer from './Timer';
 import axios from 'axios';
 import dateFormat from 'dateformat';
-import { useSelector } from 'react-redux';
+import { setCountInputAction } from '../reducers/countInput';
 
 interface ThursdayRecord {
   id?: number;
@@ -22,9 +24,12 @@ const REST_TIME = 60; // 60s
 
 const Thursday = ({ date }: ThursdayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
-  const [status, setStatus] = useState<Status>('READY');
+  const dispatch = useDispatch();
+
+  const [status, setStatus] = useState<Status>('INITIAL');
   const [records, setRecords] = useState<ThursdayRecord[]>([]);
   const [goal, setGoal] = useState<number>(1);
+  const [timeOut, setTimeOut] = useState<Date>(new Date());
 
   const currentOrder = useMemo(() => records.length, [records]);
 
@@ -33,53 +38,49 @@ const Thursday = ({ date }: ThursdayProps) => {
   }, []);
 
   const handleClickSuccess = useCallback(() => {
-    setRecords([
+    const newRecords = [
       ...records,
       {
         count: goal,
         isDone: true,
         isSaved: false,
       },
-    ]);
+    ];
+    const timeOut = new Date();
+    timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
+    setTimeOut(timeOut);
+    setRecords(newRecords);
     setStatus('REST');
   }, [records, goal]);
 
   const handleClickFail = useCallback(() => {
-    setRecords([
+    const newRecords = [
       ...records,
       {
         count: goal - 1,
         isDone: false,
         isSaved: false,
       },
-    ]);
+    ];
+    const index = records.length;
+    dispatch(
+      setCountInputAction({
+        count: goal - 1,
+        max: goal - 1,
+        onClickConfirm: (count: number) => {
+          newRecords[index].count = count;
+          newRecords[index].isDone = true;
+          newRecords[index].isSaved = false;
+          setRecords(newRecords);
+        },
+      })
+    );
     setStatus('COMPLETE');
   }, [records, goal]);
 
   const handleEndTimer = useCallback(() => {
     setStatus('EXERCISING');
   }, []);
-
-  const handleChangeCount = useCallback(
-    async (e) => {
-      const count = parseInt(e.target.value, 10);
-      const newCounts = [...records];
-      newCounts[currentOrder - 1].count = isNaN(count)
-        ? 0
-        : count >= goal
-        ? goal - 1
-        : count;
-      newCounts[currentOrder - 1].isSaved = false;
-      setRecords(newCounts);
-    },
-    [currentOrder, records, goal]
-  );
-
-  const handleClickSave = useCallback(() => {
-    const newCounts = [...records];
-    newCounts[currentOrder - 1].isDone = true;
-    setRecords(newCounts);
-  }, [currentOrder, records]);
 
   const getRecords = useCallback(async () => {
     try {
@@ -92,10 +93,11 @@ const Thursday = ({ date }: ThursdayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        let max = 0;
+        let max = 1;
         records.forEach(({ count }: Record) => {
           if (count > max) max = count;
         });
+        goal = max;
         setGoal(max);
       }
 
@@ -104,17 +106,20 @@ const Thursday = ({ date }: ThursdayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        if (records.length === 0) return;
         const newRecords = records.map(({ id, count }: Record) => ({
           id,
           count,
           isDone: true,
           isSaved: true,
         })) as ThursdayRecord[];
-        if (newRecords[newRecords.length - 1].count !== goal)
+        if (
+          newRecords.length !== 0 &&
+          newRecords[newRecords.length - 1].count !== goal
+        ) {
           setStatus('COMPLETE');
-        else if (records.length > 0) setStatus('EXERCISING');
-        else setStatus('READY');
+        } else {
+          setStatus('READY');
+        }
         setRecords(newRecords);
       }
     } catch (error) {
@@ -200,41 +205,56 @@ const Thursday = ({ date }: ThursdayProps) => {
   return (
     <div>
       <PushUp date={date} />
-      <p>MAX Set</p>
-      <p>{`${records.length} set`}</p>
-      {records.map((record, index) => {
-        return (
-          <span key={index}>{`${record.count} [${
-            record.isSaved ? 'saved' : ''
-          }] `}</span>
-        );
-      })}
-      {status === 'READY' && <button onClick={handleClickReady}>시작</button>}
-      {status === 'EXERCISING' && (
-        <>
-          <p>운동 중</p>
-          <>
-            <button onClick={handleClickSuccess}>성공</button>
-            <button onClick={handleClickFail}>실패</button>
-          </>
-        </>
-      )}
-      {status === 'REST' && (
-        <div>
-          휴식 <Timer time={REST_TIME} onEnd={handleEndTimer} /> 초
-        </div>
-      )}
-      {status === 'COMPLETE' && records.find(({ isDone }) => !isDone) && (
-        <p>
-          개수
-          <input
-            type='text'
-            pattern='\d*'
-            value={records[currentOrder - 1].count}
-            onChange={handleChangeCount}
-          />
-          <button onClick={handleClickSave}>저장</button>
+      <div id='record' className='record-container'>
+        <h1 className='category'>최대 세트수 도전</h1>
+        <p className='describe'>
+          수요일 반복 횟수로 실패 세트가 나올때까지 실시
         </p>
+        <p className='describe'>휴식 시간 : 60초</p>
+        <div className='record-wrapper tuesday-wrapper'>
+          {records.map((record, index) => (
+            <RecordItem key={index} item={record} />
+          ))}
+        </div>
+        {status === 'READY' && (
+          <div className='btn-start-wrapper'>
+            <button className='btn-start no-drag' onClick={handleClickReady}>
+              {currentOrder === 0 ? 'Start' : 'Resume'}
+            </button>
+          </div>
+        )}
+      </div>
+      {(status === 'EXERCISING' || status === 'REST') && (
+        <div className='recording-container record-container'>
+          <h1 className='category'>최대 세트수 도전</h1>
+          <p className='describe'>
+            수요일 반복 횟수로 실패 세트가 나올때까지 실시
+          </p>
+          <p className='describe'>휴식 시간 : 60초</p>
+          <div className='record-wrapper tuesday-wrapper'>
+            {records.map((record, index) => {
+              return <RecordItem key={index} item={record} />;
+            })}
+          </div>
+          {status === 'REST' ? (
+            <div className='btn-status timer-wrapper'>
+              <Timer timeOut={timeOut} onEnd={handleEndTimer} />
+            </div>
+          ) : (
+            <>
+              <div className='btn-status'>
+                <p className='btn-status-excersize'>Pulling Up</p>
+                <div className='btn btn-fail' onClick={handleClickFail}>
+                  실패
+                </div>
+                <div className='btn btn-success' onClick={handleClickSuccess}>
+                  성공
+                </div>
+              </div>
+              <p className='btn-describe'>{`${goal}회 성공하셨나요?`}</p>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

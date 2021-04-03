@@ -44,7 +44,7 @@ const Tuesday = ({ date }: TuesdayProps) => {
   }, []);
 
   const handleClickSuccess = useCallback(() => {
-    const newRecord = [
+    const newRecords = [
       ...records,
       {
         count: records.length + 1,
@@ -53,12 +53,12 @@ const Tuesday = ({ date }: TuesdayProps) => {
         isSaved: false,
       },
     ];
-    const index = newRecord.findIndex(({ isSuccessed }) => !isSuccessed);
-    const restTime = index === -1 ? newRecord.length : index;
+    const index = newRecords.findIndex(({ isSuccessed }) => !isSuccessed);
+    const restTime = index === -1 ? newRecords.length : index;
     const timeOut = new Date();
     timeOut.setSeconds(timeOut.getSeconds() + restTime * REST_TIME_RATIO);
     setTimeOut(timeOut);
-    setRecords(newRecord);
+    setRecords(newRecords);
     setStatus('REST');
   }, [records]);
 
@@ -142,7 +142,6 @@ const Tuesday = ({ date }: TuesdayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        if (records.length === 0) return;
         const newRecords = records.map(({ id, count, order }: Record) => ({
           id,
           count,
@@ -236,7 +235,6 @@ const Tuesday = ({ date }: TuesdayProps) => {
     getRecords();
   }, [date]);
 
-  console.log(status);
   return (
     <div>
       <PushUp date={date} />
