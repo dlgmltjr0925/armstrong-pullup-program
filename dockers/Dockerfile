@@ -1,0 +1,12 @@
+FROM node:lts-alpine
+MAINTAINER fine <dlgmltjr0925@gmail.com>
+
+RUN mkdir -p /armstrong/data
+ADD armstrong.tar /armstrong
+
+WORKDIR /armstrong
+
+VOLUME /armstrong/data
+EXPOSE 3000
+
+ENTRYPOINT ["/bin/sh", "-c", "yarn && yarn start"]
