@@ -67,7 +67,7 @@ const TodayPage = () => {
         <>
           <div className='day-select-container'>
             <div className='day-select-wrapper'>
-              <span>{`${dateFormat(date, 'yyyy년 m월 dd일')} (${
+              <span>{`${dateFormat(date, 'yyyy년 mm월 dd일')} (${
                 week[date.getDay()]
               })`}</span>
               <div>
