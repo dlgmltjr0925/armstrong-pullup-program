@@ -35,3 +35,5 @@ yarn-error.log*
 
 /data/*
 !data/.keep
+
+armstrong.tar
