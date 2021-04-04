@@ -5,7 +5,9 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "docker-build": "./scripts/docker-build.sh",
+    "docker-build:arm64v8": "./scripts/docker-build.arm64v8.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
