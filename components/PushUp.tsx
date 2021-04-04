@@ -1,14 +1,11 @@
 import { Member, Record } from '../interfaces';
-import {
-  resetCountInputAction,
-  setCountInputAction,
-} from '../reducers/countInput';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import PushUpItem from './PushUpItem';
 import axios from 'axios';
 import dateFormat from 'dateformat';
+import { setCountInputAction } from '../reducers/countInput';
 
 interface PushUpProps {
   date: Date;

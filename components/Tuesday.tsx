@@ -2,7 +2,6 @@ import { Member, Record, Status } from '../interfaces';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import PushUp from './PushUp';
 import RecordItem from './RecordItem';
 import Timer from './Timer';
 import axios from 'axios';
