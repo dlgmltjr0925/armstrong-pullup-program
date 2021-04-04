@@ -1,0 +1,9 @@
+FROM arm64v8/node:lts-alpine
+MAINTAINER fine <dlgmltjr0925@gmail.com>
+
+RUN mkdir -p armstrong/data
+COPY ../.next /armstrong/
+COPY ../package.json /armstrong/
+
+ENTRYPOINT ["yarn"]
+CMD ["yarn", "start"]
