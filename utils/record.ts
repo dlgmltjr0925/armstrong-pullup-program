@@ -90,7 +90,10 @@ export const insertRecord = ({
   try {
     const recordData = getRecordData(memberId);
     const index = recordData.data.findIndex(
-      (data) => data.date === record.date && data.order === record.order
+      (data) =>
+        data.date === record.date &&
+        data.order === record.order &&
+        data.type === record.type
     );
     if (index !== -1) return recordData.data[index].id;
     const newRecord = {
