@@ -229,7 +229,7 @@ header nav {
 
 .count-input-container .count-container {
   margin-top: 80px;
-  height: 150px;
+  height: 120px;
   padding: 0 15%;
   overflow: hidden;
 }
@@ -237,8 +237,8 @@ header nav {
 .count-input-container .count-container .count-wrapper {
   float: left;
   border: 3px solid #ccc;
-  width: 130px;
-  height: 130px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -246,7 +246,7 @@ header nav {
 }
 
 .count-input-container .count-container .count-wrapper .count {
-  font-size: 50px;
+  font-size: 40px;
   font-weight: bold;
 }
 
@@ -256,7 +256,6 @@ header nav {
 
 .count-input-container .count-container .btn-wrapper {
   float: right;
-  width: 70px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -264,14 +263,17 @@ header nav {
 }
 
 .count-input-container .count-container .btn-wrapper .btn {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   border: 0;
   outline: 0;
   background: #eee;
   font-size: 25px;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .count-input-container .count-container .btn:active {
@@ -293,15 +295,18 @@ header nav {
 
 .count-input-container .keyboard-wrapper .key-pad {
   position: relative;
-  height: 70px;
-  width: 70px;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
   background: #eee;
   border: 0;
   outline: 0;
   margin: 3%;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .count-input-container .keyboard-wrapper .key-pad:active {
@@ -314,9 +319,7 @@ header nav {
 
 .count-input-container .keyboard-wrapper .key-pad .back-icon {
   position: absolute;
-  top: 22px;
-  left: 18px;
-  width: 30px;
+  width: 20px;
 }
 
 .count-input-container .btn {
