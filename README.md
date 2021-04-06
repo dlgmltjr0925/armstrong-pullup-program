@@ -4,9 +4,22 @@
 
 ## 실행 방법
 
+### node.js
+
 ```bash
 git clone https://github.com/dlgmltjr0925/armstrong-pullup-program.git
 cd armstrong-pullup-program
 yarn && yarn build
 yarn start
+```
+
+### docker
+
+- arm64v8
+
+```bash
+docker run -d --name armstrong \
+  -p 3000:3000 \
+  -v ${some-dir}/data:/armstrong/data \
+  dlgmltjr0925/armstrong-pullup-program:arm64v8-latest
 ```
