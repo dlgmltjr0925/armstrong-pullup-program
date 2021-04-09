@@ -92,7 +92,11 @@ const Friday = ({ date }: FridayProps) => {
     }
   }, [dayOfWeek]);
 
-  return <div>{dayOfWeek !== -1 && <WeekComponent date={date} />}</div>;
+  return (
+    <div>
+      <WeekComponent date={date} />
+    </div>
+  );
 };
 
 export default Friday;
