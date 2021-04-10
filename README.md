@@ -15,6 +15,16 @@ yarn start
 
 ### docker
 
+#### build
+
+- arm64v8
+
+```bash
+yarn docker-build:arm64v8
+```
+
+#### run
+
 - arm64v8
 
 ```bash
