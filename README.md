@@ -17,6 +17,12 @@ yarn start
 
 #### build
 
+- amd64
+
+```bash
+yarn docker-build
+```
+
 - arm64v8
 
 ```bash

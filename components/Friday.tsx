@@ -33,20 +33,17 @@ const Friday = ({ date }: FridayProps) => {
           const { type } = records[0];
           switch (type) {
             case 'MAX_COUNT':
-              setDayOfWeek(1);
-              break;
+              return setDayOfWeek(1);
             case 'PYRAMID':
-              setDayOfWeek(2);
-              break;
+              return setDayOfWeek(2);
             case 'THREE_GRIP':
-              setDayOfWeek(3);
-              break;
+              return setDayOfWeek(3);
             case 'MAX_SET':
-              setDayOfWeek(4);
-              break;
+              return setDayOfWeek(4);
           }
         }
       }
+      setDayOfWeek(0);
     } catch (error) {
       throw error;
     }
@@ -92,11 +89,7 @@ const Friday = ({ date }: FridayProps) => {
     }
   }, [dayOfWeek]);
 
-  return (
-    <div>
-      <WeekComponent date={date} />
-    </div>
-  );
+  return <div>{dayOfWeek !== -1 && <WeekComponent date={date} />}</div>;
 };
 
 export default Friday;
