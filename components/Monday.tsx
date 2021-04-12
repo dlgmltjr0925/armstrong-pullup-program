@@ -193,9 +193,10 @@ const Monday = ({ date }: MondayProps) => {
         <h1 className='category'>풀업 5세트</h1>
         <p className='describe'>최대 반복 횟수, 쉬는 시간 : 90초</p>
         <div className='record-wrapper monday-wrapper'>
-          {records.map((record, index) => {
-            return <RecordItem key={index} item={record} />;
-          })}
+          {status !== 'INITIAL' &&
+            records.map((record, index) => {
+              return <RecordItem key={index} item={record} />;
+            })}
         </div>
         {status === 'READY' && (
           <div className='btn-start-wrapper'>

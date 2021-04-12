@@ -220,25 +220,28 @@ const Wednesday = ({ date }: WednesdayProps) => {
         <div className='record-wrapper wednesday-wrapper'>
           <p className='sub-category'>Pull Up</p>
           <div className='sub-record-wrapper'>
-            {records.slice(0, 3).map((record, index) => {
-              return <RecordItem key={index} item={record} />;
-            })}
+            {status !== 'INITIAL' &&
+              records.slice(0, 3).map((record, index) => {
+                return <RecordItem key={index} item={record} />;
+              })}
           </div>
         </div>
         <div className='record-wrapper wednesday-wrapper'>
           <p className='sub-category'>Chin Up</p>
           <div className='sub-record-wrapper'>
-            {records.slice(3, 6).map((record, index) => {
-              return <RecordItem key={index} item={record} />;
-            })}
+            {status !== 'INITIAL' &&
+              records.slice(3, 6).map((record, index) => {
+                return <RecordItem key={index} item={record} />;
+              })}
           </div>
         </div>
         <div className='record-wrapper wednesday-wrapper'>
           <p className='sub-category'>Wide Pull Up</p>
           <div className='sub-record-wrapper'>
-            {records.slice(6, 9).map((record, index) => {
-              return <RecordItem key={index} item={record} />;
-            })}
+            {status !== 'INITIAL' &&
+              records.slice(6, 9).map((record, index) => {
+                return <RecordItem key={index} item={record} />;
+              })}
           </div>
         </div>
         {status === 'READY' && (
