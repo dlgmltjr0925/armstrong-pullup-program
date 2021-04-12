@@ -71,12 +71,11 @@ const PushUp = ({ date }: PushUpProps) => {
 
   const handleClickItem = (index: number) => {
     return () => {
-      const record = records[index];
       const isActive = index === 0 || records[index - 1].count !== 0;
       if (!isActive) return;
       dispatch(
         setCountInputAction({
-          count: record.count,
+          count: 0,
           onClickConfirm: (count: number) => {
             const newRecords = [...records];
             newRecords[index].count = count;
