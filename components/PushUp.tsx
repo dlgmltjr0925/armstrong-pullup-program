@@ -67,7 +67,7 @@ const PushUp = ({ date }: PushUpProps) => {
     } catch (error) {
       throw error;
     }
-  }, []);
+  }, [date]);
 
   const handleClickItem = (index: number) => {
     return () => {
