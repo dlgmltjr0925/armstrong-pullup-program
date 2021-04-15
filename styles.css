@@ -582,6 +582,11 @@ header nav {
   margin: 100px auto 40px;
 }
 
+.record-container .btn-status.excersizing {
+  border: 3px solid orange;
+  background-color: rgba(255, 165, 0, 0.1);
+}
+
 .record-container .btn-status .btn-status-excersize {
   font-size: 30px;
   text-align: center;

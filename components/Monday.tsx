@@ -221,7 +221,7 @@ const Monday = ({ date }: MondayProps) => {
             </div>
           ) : (
             <>
-              <div className='btn-status' onClick={handleClickRest}>
+              <div className='btn-status excersizing' onClick={handleClickRest}>
                 <p className='btn-status-excersize'>Pulling Up</p>
               </div>
 

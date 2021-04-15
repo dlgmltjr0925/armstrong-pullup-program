@@ -286,7 +286,7 @@ const Wednesday = ({ date }: WednesdayProps) => {
             </div>
           ) : (
             <>
-              <div className='btn-status' onClick={handleClickRest}>
+              <div className='btn-status excersizing' onClick={handleClickRest}>
                 <pre className='btn-status-excersize'>{type}</pre>
               </div>
 
