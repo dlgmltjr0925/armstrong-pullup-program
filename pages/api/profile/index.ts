@@ -14,7 +14,8 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
       const profile = insertProfile(nickname);
       res.status(200).json({ profile });
     } else if (_req.method === 'PUT') {
-      const profile = updateProfile(_req.body.profile);
+      const { id, nickname } = _req.body;
+      const profile = updateProfile({ id, nickname });
       if (profile === null) res.status(400).json({});
       else res.status(200).json({ profile });
     } else if (_req.method === 'DELETE') {
