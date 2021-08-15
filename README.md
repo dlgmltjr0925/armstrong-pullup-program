@@ -1,6 +1,8 @@
 # Armstrong pull up program
 
-유튜브 [턱걸이 개수를 늘리기 위한 세계적으로 유명한 풀업 루틴](https://youtu.be/QmXmM2Yf8sk)을 보고 제작한 웹 서비스입니다.
+### 유튜브 [턱걸이 개수를 늘리기 위한 세계적으로 유명한 풀업 루틴](https://youtu.be/QmXmM2Yf8sk)을 보고 제작한 모바일 웹 서비스
+
+<img width="600" src="https://github.com/dlgmltjr0925/armstrong-pullup-program/blob/master/docs/sample.gif?raw=true"/>
 
 ## 실행 방법
 
@@ -17,13 +19,13 @@ yarn start
 
 #### build
 
-- amd64
+-   amd64
 
 ```bash
 yarn docker-build
 ```
 
-- arm64v8
+-   arm64v8
 
 ```bash
 yarn docker-build:arm64v8
@@ -31,7 +33,7 @@ yarn docker-build:arm64v8
 
 #### run
 
-- arm64v8
+-   arm64v8
 
 ```bash
 docker run -d --name armstrong \
