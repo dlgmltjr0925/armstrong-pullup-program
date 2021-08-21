@@ -6,8 +6,6 @@
 
 ## 실행 방법
 
-### node.js
-
 ```bash
 git clone https://github.com/dlgmltjr0925/armstrong-pullup-program.git
 cd armstrong-pullup-program
