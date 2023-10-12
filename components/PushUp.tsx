@@ -75,14 +75,13 @@ const PushUp = ({ date }: PushUpProps) => {
       if (!isActive) return;
       dispatch(
         setCountInputAction({
-          count: 0,
+          count: records[index].prev,
           onClickConfirm: (count: number) => {
             const newRecords = [...records];
             newRecords[index].count = count;
             newRecords[index].isDone = true;
             newRecords[index].isSaved = false;
             setRecords(newRecords);
-            if (index !== 2) newRecords[index + 1].count = count;
           },
         })
       );

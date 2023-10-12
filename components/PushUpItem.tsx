@@ -14,7 +14,7 @@ interface PushUpItemProps
 }
 
 const PushUpItem = ({ record, isActive, ...props }: PushUpItemProps) => {
-  const { count, isDone, isSaved } = record;
+  const { count, prev, isDone, isSaved } = record;
 
   const cn = useMemo<string>(() => {
     if (!isActive) return 'inactive';
@@ -25,7 +25,7 @@ const PushUpItem = ({ record, isActive, ...props }: PushUpItemProps) => {
 
   return (
     <div className={`push-up-item no-drag ${cn}`} {...props}>
-      <span>{count}</span>
+      <span>{count || prev}</span>
     </div>
   );
 };
