@@ -13,7 +13,6 @@ import createSagaMiddleware from 'redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import reducer from '../reducers';
 import axios from 'axios';
-import config from '../../next.config';
 
 interface AppProps {
   Component: any;
@@ -21,7 +20,7 @@ interface AppProps {
 }
 
 const App = ({ Component }: AppProps) => {
-  axios.defaults.baseURL = config.basePath;
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_PATH;
   return <Component />;
 };
 

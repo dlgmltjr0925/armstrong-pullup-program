@@ -1,4 +1,11 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const withPWA = require('next-pwa')({
+  dest: 'public',
+});
+
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
   serverRuntimeConfig: {
     PROJECT_ROOT: __dirname,
   },
@@ -6,5 +13,7 @@ module.exports = {
     host: 'localhost',
     port: '3000',
   },
-  basePath: '/armstrong',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
 };
+
+module.exports = withPWA(nextConfig);
