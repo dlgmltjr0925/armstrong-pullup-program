@@ -1,4 +1,4 @@
-import '../styles.css';
+import '../styles/styles.css';
 
 import {
   Middleware,
@@ -13,7 +13,7 @@ import createSagaMiddleware from 'redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import reducer from '../reducers';
 import axios from 'axios';
-import config from '../next.config';
+import config from '../../next.config';
 
 interface AppProps {
   Component: any;

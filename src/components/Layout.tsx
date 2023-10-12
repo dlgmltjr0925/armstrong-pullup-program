@@ -27,23 +27,23 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
   };
 
   return (
-    <div className='container'>
+    <div className="container">
       <div>
         <Head>
           <title>{`${title} | Armstrong Pullup Program`}</title>
-          <meta charSet='utf-8' />
+          <meta charSet="utf-8" />
           <meta
-            name='viewport'
-            content='initial-scale=1.0, width=device-width'
+            name="viewport"
+            content="initial-scale=1.0, width=device-width"
           />
           <link
             href={`https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap`}
-            rel='stylesheet'
+            rel="stylesheet"
           />
-          <link rel='preconnect' href='https://fonts.gstatic.com' />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link
-            href='https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap'
-            rel='stylesheet'
+            href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap"
+            rel="stylesheet"
           />
         </Head>
         <header>

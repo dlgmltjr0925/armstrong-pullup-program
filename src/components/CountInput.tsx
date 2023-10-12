@@ -97,57 +97,57 @@ const CountInput = () => {
 
   return (
     <div className={`count-input-container${visible ? '' : ' invisible'}`}>
-      <div className='count-container'>
-        <div className='count-wrapper'>
+      <div className="count-container">
+        <div className="count-wrapper">
           <span className={`count${count > 100 ? ' max-length' : ''}`}>
             {count}
           </span>
         </div>
-        <div className='btn-wrapper'>
-          <button className='btn' onClick={handleClickIncrease(true)}>
+        <div className="btn-wrapper">
+          <button className="btn" onClick={handleClickIncrease(true)}>
             +
           </button>
-          <button className='btn' onClick={handleClickIncrease(false)}>
+          <button className="btn" onClick={handleClickIncrease(false)}>
             -
           </button>
         </div>
       </div>
 
-      <div className='keyboard-wrapper'>
-        <div className='row'>
+      <div className="keyboard-wrapper">
+        <div className="row">
           {keyPads.slice(0, 3).map((number) => (
             <button
               key={number}
-              className='key-pad'
+              className="key-pad"
               onClick={handleClickPad(number)}
             >
               {number}
             </button>
           ))}
         </div>
-        <div className='row'>
+        <div className="row">
           {keyPads.slice(3, 6).map((number) => (
             <button
               key={number}
-              className='key-pad'
+              className="key-pad"
               onClick={handleClickPad(number)}
             >
               {number}
             </button>
           ))}
         </div>
-        <div className='row'>
+        <div className="row">
           {keyPads.slice(6, 9).map((number) => (
             <button
               key={number}
-              className='key-pad'
+              className="key-pad"
               onClick={handleClickPad(number)}
             >
               {number}
             </button>
           ))}
         </div>
-        <div className='row'>
+        <div className="row">
           {keyPads.slice(9, 12).map((number) => (
             <button
               key={number}
@@ -157,16 +157,16 @@ const CountInput = () => {
               {number !== 'backspace' ? (
                 number
               ) : (
-                <FontAwesomeIcon className='back-icon' icon={faBackspace} />
+                <FontAwesomeIcon className="back-icon" icon={faBackspace} />
               )}
             </button>
           ))}
         </div>
-        <div className='bottom-wrapper'>
+        <div className="bottom-wrapper">
           <button onClick={handleClickCancel}>Cancel</button>
           <button onClick={handleClickOk}>
             OK
-            {!!timer && <span className='timer'>{timer}</span>}
+            {!!timer && <span className="timer">{timer}</span>}
           </button>
         </div>
       </div>

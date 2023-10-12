@@ -6,7 +6,10 @@ import { Data, Member } from '../interfaces';
 
 const { serverRuntimeConfig } = getConfig();
 
-export const MEMBER_FILE_PATH = path.join(serverRuntimeConfig.PROJECT_ROOT, 'data/member.json');
+export const MEMBER_FILE_PATH = path.join(
+  serverRuntimeConfig.PROJECT_ROOT,
+  'data/member.json'
+);
 
 let memberData: Data<Member> | null = null;
 
@@ -14,7 +17,11 @@ const getMemberData = (): Data<Member> => {
   try {
     if (memberData === null) {
       if (!fs.existsSync(MEMBER_FILE_PATH)) {
-        fs.writeFileSync(MEMBER_FILE_PATH, JSON.stringify({ increment: 0, data: [] }), { encoding: 'utf-8' });
+        fs.writeFileSync(
+          MEMBER_FILE_PATH,
+          JSON.stringify({ increment: 0, data: [] }),
+          { encoding: 'utf-8' }
+        );
       }
 
       const data = fs.readFileSync(MEMBER_FILE_PATH, 'utf-8');

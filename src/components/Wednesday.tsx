@@ -212,32 +212,32 @@ const Wednesday = ({ date }: WednesdayProps) => {
 
   return (
     <div>
-      <div id='record' className='record-container'>
-        <h1 className='category'>3그립</h1>
-        <p className='describe'>
+      <div id="record" className="record-container">
+        <h1 className="category">3그립</h1>
+        <p className="describe">
           풀업, 친업, 와이드 풀업을 각 3세트, 쉬는 시간 : 60초
         </p>
-        <div className='record-wrapper wednesday-wrapper'>
-          <p className='sub-category'>Pull Up</p>
-          <div className='sub-record-wrapper'>
+        <div className="record-wrapper wednesday-wrapper">
+          <p className="sub-category">Pull Up</p>
+          <div className="sub-record-wrapper">
             {status !== 'INITIAL' &&
               records.slice(0, 3).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
               })}
           </div>
         </div>
-        <div className='record-wrapper wednesday-wrapper'>
-          <p className='sub-category'>Chin Up</p>
-          <div className='sub-record-wrapper'>
+        <div className="record-wrapper wednesday-wrapper">
+          <p className="sub-category">Chin Up</p>
+          <div className="sub-record-wrapper">
             {status !== 'INITIAL' &&
               records.slice(3, 6).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
               })}
           </div>
         </div>
-        <div className='record-wrapper wednesday-wrapper'>
-          <p className='sub-category'>Wide Pull Up</p>
-          <div className='sub-record-wrapper'>
+        <div className="record-wrapper wednesday-wrapper">
+          <p className="sub-category">Wide Pull Up</p>
+          <div className="sub-record-wrapper">
             {status !== 'INITIAL' &&
               records.slice(6, 9).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
@@ -245,52 +245,52 @@ const Wednesday = ({ date }: WednesdayProps) => {
           </div>
         </div>
         {status === 'READY' && (
-          <div className='btn-start-wrapper'>
-            <button className='btn-start no-drag' onClick={handleClickReady}>
+          <div className="btn-start-wrapper">
+            <button className="btn-start no-drag" onClick={handleClickReady}>
               {currentOrder === 0 ? 'Start' : 'Resume'}
             </button>
           </div>
         )}
       </div>
       {(status === 'EXERCISING' || status === 'REST') && (
-        <div className='recording-container record-container'>
-          <h1 className='category'>3그립 3세트(풀업, 친업, 와이드 풀업)</h1>
-          <p className='describe'>쉬는 시간 : 60초</p>
-          <div className='record-wrapper wednesday-wrapper'>
-            <p className='sub-category'>Pull Up</p>
-            <div className='sub-record-wrapper'>
+        <div className="recording-container record-container">
+          <h1 className="category">3그립 3세트(풀업, 친업, 와이드 풀업)</h1>
+          <p className="describe">쉬는 시간 : 60초</p>
+          <div className="record-wrapper wednesday-wrapper">
+            <p className="sub-category">Pull Up</p>
+            <div className="sub-record-wrapper">
               {records.slice(0, 3).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
               })}
             </div>
           </div>
-          <div className='record-wrapper wednesday-wrapper'>
-            <p className='sub-category'>Chin Up</p>
-            <div className='sub-record-wrapper'>
+          <div className="record-wrapper wednesday-wrapper">
+            <p className="sub-category">Chin Up</p>
+            <div className="sub-record-wrapper">
               {records.slice(3, 6).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
               })}
             </div>
           </div>
-          <div className='record-wrapper wednesday-wrapper'>
-            <p className='sub-category'>Wide Pull Up</p>
-            <div className='sub-record-wrapper'>
+          <div className="record-wrapper wednesday-wrapper">
+            <p className="sub-category">Wide Pull Up</p>
+            <div className="sub-record-wrapper">
               {records.slice(6, 9).map((record, index) => {
                 return <RecordItem key={index} item={record} />;
               })}
             </div>
           </div>
           {status === 'REST' ? (
-            <div className='btn-status timer-wrapper'>
+            <div className="btn-status timer-wrapper">
               <Timer timeOut={timeOut} onEnd={handleEndTimer} />
             </div>
           ) : (
             <>
-              <div className='btn-status excersizing' onClick={handleClickRest}>
-                <pre className='btn-status-excersize'>{type}</pre>
+              <div className="btn-status excersizing" onClick={handleClickRest}>
+                <pre className="btn-status-excersize">{type}</pre>
               </div>
 
-              <p className='btn-describe'>세트가 끝나면 누르세요</p>
+              <p className="btn-describe">세트가 끝나면 누르세요</p>
             </>
           )}
         </div>

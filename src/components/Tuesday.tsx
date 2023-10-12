@@ -148,8 +148,9 @@ const Tuesday = ({ date }: TuesdayProps) => {
           isDone: true,
           isSaved: true,
         })) as TuesdayRecord[];
-        const failCount = newRecords.filter(({ isSuccessed }) => !isSuccessed)
-          .length;
+        const failCount = newRecords.filter(
+          ({ isSuccessed }) => !isSuccessed
+        ).length;
         if (failCount === 2) setStatus('COMPLETE');
         else setStatus('READY');
         setRecords(newRecords);
@@ -236,46 +237,46 @@ const Tuesday = ({ date }: TuesdayProps) => {
 
   return (
     <div>
-      <div id='record' className='record-container'>
-        <h1 className='category'>피라미드 루틴</h1>
-        <p className='describe'>세트당 1회씩 증가</p>
-        <div className='record-wrapper tuesday-wrapper'>
+      <div id="record" className="record-container">
+        <h1 className="category">피라미드 루틴</h1>
+        <p className="describe">세트당 1회씩 증가</p>
+        <div className="record-wrapper tuesday-wrapper">
           {records.map((record, index) => (
             <RecordItem key={index} item={record} />
           ))}
         </div>
         {status === 'READY' && (
-          <div className='btn-start-wrapper'>
-            <button className='btn-start no-drag' onClick={handleClickReady}>
+          <div className="btn-start-wrapper">
+            <button className="btn-start no-drag" onClick={handleClickReady}>
               {currentOrder === 0 ? 'Start' : 'Resume'}
             </button>
           </div>
         )}
       </div>
       {(status === 'EXERCISING' || status === 'REST') && (
-        <div className='recording-container record-container'>
-          <h1 className='category'>피라미드 루틴</h1>
-          <p className='describe'>세트당 1회씩 증가</p>
-          <div className='record-wrapper tuesday-wrapper'>
+        <div className="recording-container record-container">
+          <h1 className="category">피라미드 루틴</h1>
+          <p className="describe">세트당 1회씩 증가</p>
+          <div className="record-wrapper tuesday-wrapper">
             {records.map((record, index) => {
               return <RecordItem key={index} item={record} />;
             })}
           </div>
           {status === 'REST' ? (
-            <div className='btn-status timer-wrapper'>
+            <div className="btn-status timer-wrapper">
               <Timer timeOut={timeOut} onEnd={handleEndTimer} />
             </div>
           ) : (
             <>
-              <div className='btn-status' onClick={handleClickFinish}>
-                <p className='btn-status-excersize'>Pulling Up</p>
+              <div className="btn-status" onClick={handleClickFinish}>
+                <p className="btn-status-excersize">Pulling Up</p>
                 {!isFailed && (
                   <>
-                    <div className='btn btn-fail' onClick={handleClickFail}>
+                    <div className="btn btn-fail" onClick={handleClickFail}>
                       실패
                     </div>
                     <div
-                      className='btn btn-success'
+                      className="btn btn-success"
                       onClick={handleClickSuccess}
                     >
                       성공
@@ -284,9 +285,9 @@ const Tuesday = ({ date }: TuesdayProps) => {
                 )}
               </div>
               {isFailed ? (
-                <p className='btn-describe'>세트가 끝나면 누르세요</p>
+                <p className="btn-describe">세트가 끝나면 누르세요</p>
               ) : (
-                <p className='btn-describe'>
+                <p className="btn-describe">
                   {`${currentOrder + 1}회 성공하셨나요?`}
                 </p>
               )}

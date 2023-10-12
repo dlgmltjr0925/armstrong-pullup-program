@@ -95,8 +95,8 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
   }, []);
 
   return (
-    <Layout title='Login'>
-      <div className='member-list'>
+    <Layout title="Login">
+      <div className="member-list">
         {profiles.map((profile) => {
           return (
             <MemberItem
@@ -108,15 +108,15 @@ const LoginPage = ({ ...props }: LoginPageProps) => {
           );
         })}
         {profiles.length < 4 && (
-          <button className='member-item new-item' onClick={handleClickAdd}>
+          <button className="member-item new-item" onClick={handleClickAdd}>
             {nickname === null ? (
-              <FontAwesomeIcon className='icon-plus' icon={faPlus} />
+              <FontAwesomeIcon className="icon-plus" icon={faPlus} />
             ) : (
               <input
                 ref={nicknameEl}
-                className='new-nickname'
-                type='text'
-                placeholder='nickname'
+                className="new-nickname"
+                type="text"
+                placeholder="nickname"
                 autoFocus
                 value={nickname}
                 onChange={handleChangeNickname}

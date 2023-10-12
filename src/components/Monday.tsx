@@ -8,96 +8,86 @@ import axios from 'axios';
 import dateFormat from 'dateformat';
 import { setCountInputAction } from '../reducers/countInput';
 
-interface ThursdayRecord {
+interface MondayRecord {
   id?: number;
+  prev: number;
   count: number;
   isDone: boolean;
   isSaved: boolean;
 }
 
-interface ThursdayProps {
+interface MondayProps {
   date: Date;
 }
 
-const REST_TIME = 60; // 60s
+const REST_TIME = 90; // 90s
 
-const Thursday = ({ date }: ThursdayProps) => {
+const getInitialRecords = (): MondayRecord[] =>
+  Array.from({ length: 5 }, () => ({
+    prev: 0,
+    count: 0,
+    isDone: false,
+    isSaved: false,
+  }));
+
+const Monday = ({ date }: MondayProps) => {
   const member = useSelector(({ member }: { member: Member }) => member);
   const dispatch = useDispatch();
 
   const [status, setStatus] = useState<Status>('INITIAL');
-  const [records, setRecords] = useState<ThursdayRecord[]>([]);
-  const [goal, setGoal] = useState<number>(1);
+  const [records, setRecords] = useState<MondayRecord[]>(getInitialRecords());
   const [timeOut, setTimeOut] = useState<Date>(new Date());
 
-  const currentOrder = useMemo(() => records.length, [records]);
+  const currentOrder = useMemo(
+    () => records.findIndex(({ isDone }) => !isDone),
+    [records]
+  );
 
   const handleClickReady = useCallback(() => {
     setStatus('EXERCISING');
   }, []);
 
-  const handleClickSuccess = useCallback(() => {
-    const newRecords = [
-      ...records,
-      {
-        count: goal,
-        isDone: true,
-        isSaved: false,
-      },
-    ];
-    const timeOut = new Date();
-    timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
-    setTimeOut(timeOut);
-    setRecords(newRecords);
-    setStatus('REST');
-  }, [records, goal]);
-
-  const handleClickFail = useCallback(() => {
-    const newRecords = [
-      ...records,
-      {
-        count: goal - 1,
-        isDone: false,
-        isSaved: false,
-      },
-    ];
-    const index = records.length;
+  const handleClickRest = useCallback(() => {
+    let timeOut = undefined;
+    if (currentOrder !== 4) {
+      timeOut = new Date();
+      timeOut.setSeconds(timeOut.getSeconds() + REST_TIME);
+      setTimeOut(timeOut);
+    }
     dispatch(
       setCountInputAction({
-        count: goal - 1,
-        max: goal - 1,
+        count: records[currentOrder].count,
+        timeOut,
         onClickConfirm: (count: number) => {
-          newRecords[index].count = count;
-          newRecords[index].isDone = true;
-          newRecords[index].isSaved = false;
+          const newRecords = [...records];
+          newRecords[currentOrder].count = count;
+          newRecords[currentOrder].isDone = true;
           setRecords(newRecords);
         },
       })
     );
-    setStatus('COMPLETE');
-  }, [records, goal]);
+    setStatus(currentOrder !== 4 ? 'REST' : 'COMPLETE');
+  }, [records, currentOrder]);
 
-  const handleEndTimer = useCallback(() => {
+  const handleEndTimer = useCallback(async () => {
     setStatus('EXERCISING');
   }, []);
 
   const getRecords = useCallback(async () => {
+    const newRecords = getInitialRecords();
     try {
-      const diff = date.getDay() === 4 ? 0 : 1;
-      let goal = 1;
-      const yesterdayDate = new Date(date);
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1 - diff);
-      const yesterday = dateFormat(yesterdayDate, 'yyyymmdd');
-      let res = await axios.get(`/api/record/${member.id}/${yesterday}`);
+      const lastWeekDate = new Date(date);
+      lastWeekDate.setDate(lastWeekDate.getDate() - 7);
+      const lastWeek = dateFormat(lastWeekDate, 'yyyymmdd');
+      let res = await axios.get(`/api/record/${member.id}/${lastWeek}`);
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        let max = 1;
-        records.forEach(({ count }: Record) => {
-          if (count > max) max = count;
+        records.forEach(({ order, count }: Record) => {
+          const index = order - 1;
+          newRecords[index].prev = count;
+          newRecords[index].count = count;
         });
-        goal = max;
-        setGoal(max);
       }
 
       const today = dateFormat(date, 'yyyymmdd');
@@ -105,22 +95,17 @@ const Thursday = ({ date }: ThursdayProps) => {
 
       if (res && res.status === 200) {
         const { records } = res.data;
-        const newRecords = records.map(({ id, count }: Record) => ({
-          id,
-          count,
-          isDone: true,
-          isSaved: true,
-        })) as ThursdayRecord[];
-        if (
-          newRecords.length !== 0 &&
-          newRecords[newRecords.length - 1].count !== goal
-        ) {
-          setStatus('COMPLETE');
-        } else {
-          setStatus('READY');
-        }
-        setRecords(newRecords);
+        records.forEach(({ order, count }: Record) => {
+          const index = order - 1;
+          newRecords[index].count = count;
+          newRecords[index].isDone = true;
+          newRecords[index].isSaved = true;
+        });
+        if (records.length === 5) setStatus('COMPLETE');
+        else setStatus('READY');
       }
+
+      setRecords(newRecords);
     } catch (error) {
       throw error;
     }
@@ -129,7 +114,9 @@ const Thursday = ({ date }: ThursdayProps) => {
   const updateRecord = useCallback(
     async (record: Record): Promise<Record | void> => {
       try {
-        const res = await axios.put(`/api/record/${member.id}`, { record });
+        const res = await axios.put(`/api/record/${member.id}`, {
+          record,
+        });
         if (res && res.status === 200) {
           return res.data.record;
         }
@@ -143,7 +130,9 @@ const Thursday = ({ date }: ThursdayProps) => {
   const enrollRecord = useCallback(
     async (record: Omit<Record, 'id'>): Promise<Record | void> => {
       try {
-        const res = await axios.post(`/api/record/${member.id}`, { record });
+        const res = await axios.post(`/api/record/${member.id}`, {
+          record,
+        });
         if (res && res.status === 200) {
           return res.data.record;
         } else if (res && res.status === 202) {
@@ -168,7 +157,7 @@ const Thursday = ({ date }: ThursdayProps) => {
           if (!isDone || isSaved) return null;
           const newRecord: Omit<Record, 'id'> = {
             date: dateFormat(date, 'yyyymmdd'),
-            type: 'MAX_SET',
+            type: 'MAX_COUNT',
             count,
             order: index + 1,
           };
@@ -203,53 +192,43 @@ const Thursday = ({ date }: ThursdayProps) => {
 
   return (
     <div>
-      <div id='record' className='record-container'>
-        <h1 className='category'>최대 세트수 도전</h1>
-        <p className='describe'>
-          수요일 반복 횟수로 실패 세트가 나올때까지 실시
-        </p>
-        <p className='describe'>휴식 시간 : 60초</p>
-        <div className='record-wrapper tuesday-wrapper'>
-          {records.map((record, index) => (
-            <RecordItem key={index} item={record} />
-          ))}
+      <div id="record" className="record-container">
+        <h1 className="category">풀업 5세트</h1>
+        <p className="describe">최대 반복 횟수, 쉬는 시간 : 90초</p>
+        <div className="record-wrapper monday-wrapper">
+          {status !== 'INITIAL' &&
+            records.map((record, index) => {
+              return <RecordItem key={index} item={record} />;
+            })}
         </div>
         {status === 'READY' && (
-          <div className='btn-start-wrapper'>
-            <button className='btn-start no-drag' onClick={handleClickReady}>
+          <div className="btn-start-wrapper">
+            <button className="btn-start no-drag" onClick={handleClickReady}>
               {currentOrder === 0 ? 'Start' : 'Resume'}
             </button>
           </div>
         )}
       </div>
       {(status === 'EXERCISING' || status === 'REST') && (
-        <div className='recording-container record-container'>
-          <h1 className='category'>최대 세트수</h1>
-          <p className='describe'>
-            수요일 반복 횟수로 실패 세트가 나올때까지 실시
-          </p>
-          <p className='describe'>휴식 시간 : 60초</p>
-          <div className='record-wrapper tuesday-wrapper'>
+        <div className="recording-container record-container">
+          <h1 className="category">풀업 5세트</h1>
+          <p className="describe">최대 반복 횟수, 쉬는 시간 : 90초</p>
+          <div className="record-wrapper monday-wrapper">
             {records.map((record, index) => {
               return <RecordItem key={index} item={record} />;
             })}
           </div>
           {status === 'REST' ? (
-            <div className='btn-status timer-wrapper'>
+            <div className="btn-status timer-wrapper">
               <Timer timeOut={timeOut} onEnd={handleEndTimer} />
             </div>
           ) : (
             <>
-              <div className='btn-status'>
-                <p className='btn-status-excersize'>Pulling Up</p>
-                <div className='btn btn-fail' onClick={handleClickFail}>
-                  실패
-                </div>
-                <div className='btn btn-success' onClick={handleClickSuccess}>
-                  성공
-                </div>
+              <div className="btn-status excersizing" onClick={handleClickRest}>
+                <p className="btn-status-excersize">Pulling Up</p>
               </div>
-              <p className='btn-describe'>{`${goal}회 성공하셨나요?`}</p>
+
+              <p className="btn-describe">세트가 끝나면 누르세요</p>
             </>
           )}
         </div>
@@ -258,4 +237,4 @@ const Thursday = ({ date }: ThursdayProps) => {
   );
 };
 
-export default Thursday;
+export default Monday;

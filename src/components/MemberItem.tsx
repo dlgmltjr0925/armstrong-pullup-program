@@ -38,10 +38,10 @@ const MemberItem = ({
   );
 
   return profile ? (
-    <div className='member-item' onClick={handleClickProfile}>
-      <span className='nickname'>{profile.nickname}</span>
-      <button className='remove-icon-wrapper' onClick={handleClickDelete}>
-        <FontAwesomeIcon className='remove-icon' icon={faTimes} />
+    <div className="member-item" onClick={handleClickProfile}>
+      <span className="nickname">{profile.nickname}</span>
+      <button className="remove-icon-wrapper" onClick={handleClickDelete}>
+        <FontAwesomeIcon className="remove-icon" icon={faTimes} />
       </button>
     </div>
   ) : (

@@ -164,9 +164,9 @@ const PushUp = ({ date }: PushUpProps) => {
   }, [date]);
 
   return (
-    <div className='push-up-container'>
-      <p className='category'>Push Up</p>
-      <div className='push-up-wrapper'>
+    <div className="push-up-container">
+      <p className="category">Push Up</p>
+      <div className="push-up-wrapper">
         {records.map((record, index) => {
           const isActive = index === 0 || records[index - 1].count !== 0;
           return (

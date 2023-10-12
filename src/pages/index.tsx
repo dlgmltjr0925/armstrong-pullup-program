@@ -62,31 +62,31 @@ const TodayPage = () => {
   }, [dayOfWeek]);
 
   return (
-    <Layout title='Home'>
+    <Layout title="Home">
       {member.id !== 0 && (
         <>
-          <div className='day-select-container'>
-            <div className='day-select-wrapper'>
+          <div className="day-select-container">
+            <div className="day-select-wrapper">
               <span>{`${dateFormat(date, 'yyyy년 mm월 dd일')} (${
                 week[date.getDay()]
               })`}</span>
               <div>
-                <button className='btn prev' onClick={handleClickPrev}>
+                <button className="btn prev" onClick={handleClickPrev}>
                   <FontAwesomeIcon
-                    className='icon'
+                    className="icon"
                     icon={faChevronCircleLeft}
                   />
                 </button>
-                <button className='btn next' onClick={handleClickNext}>
+                <button className="btn next" onClick={handleClickNext}>
                   <FontAwesomeIcon
-                    className='icon'
+                    className="icon"
                     icon={faChevronCircleRight}
                   />
                 </button>
               </div>
             </div>
           </div>
-          <div className='week-container'>
+          <div className="week-container">
             {dayOfWeek !== 0 && dayOfWeek !== 6 && <PushUp date={date} />}
             <WeekComponent date={date} />
           </div>
