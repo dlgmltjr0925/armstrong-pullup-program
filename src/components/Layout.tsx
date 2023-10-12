@@ -37,7 +37,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
             content="initial-scale=1.0, width=device-width"
           />
           <link
-            href={`https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap`}
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
             rel="stylesheet"
           />
           <link rel="preconnect" href="https://fonts.gstatic.com" />

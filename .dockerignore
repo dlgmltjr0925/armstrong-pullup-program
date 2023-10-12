@@ -1,0 +1,9 @@
+.next
+data
+dockers
+docs
+node_modules
+scripts
+.gitignore
+README.md
+tsconfig.tsbuildinfo

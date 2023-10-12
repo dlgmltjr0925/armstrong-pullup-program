@@ -1,11 +1,19 @@
-FROM arm64v8/node:lts-alpine
-
-RUN mkdir -p /armstrong/data
-ADD armstrong.tar /armstrong
+FROM arm64v8/node:lts-alpine as Builder
 
 WORKDIR /armstrong
+
+COPY . .
+RUN yarn && yarn build && yarn --production
+
+FROM arm64v8/node:lts-alpine as Runner
+
+WORKDIR /armstrong
+
+RUN mkdir -p /armstrong/data
+
+COPY --from=Builder /armstrong /armstrong/
 
 VOLUME /armstrong/data
 EXPOSE 3000
 
-ENTRYPOINT ["/bin/sh", "-c", "yarn && yarn start"]
+ENTRYPOINT ["/bin/sh", "-c", "yarn start"]

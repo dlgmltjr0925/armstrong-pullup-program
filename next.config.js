@@ -9,10 +9,6 @@ const nextConfig = {
   serverRuntimeConfig: {
     PROJECT_ROOT: __dirname,
   },
-  env: {
-    host: 'localhost',
-    port: '3000',
-  },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
 };
 
