@@ -19,7 +19,7 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).json({ record });
     }
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }
 };

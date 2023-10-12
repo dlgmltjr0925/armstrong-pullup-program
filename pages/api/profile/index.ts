@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import {
-    deleteProfile, getAllProfiles, insertProfile, updateProfile
+  deleteProfile,
+  getAllProfiles,
+  insertProfile,
+  updateProfile,
 } from '../../../utils/profile';
 
 const handler = (_req: NextApiRequest, res: NextApiResponse) => {
@@ -24,7 +27,7 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
       if (profile === null) res.status(404).json({});
       else res.status(200).json({});
     }
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }
 };

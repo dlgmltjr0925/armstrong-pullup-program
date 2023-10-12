@@ -10,27 +10,27 @@
     "docker-build:arm64v8": "./scripts/docker-build.arm64v8.sh"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-fontawesome": "^0.1.14",
-    "axios": "^0.21.1",
-    "dateformat": "^4.5.1",
-    "next": "latest",
-    "next-redux-wrapper": "^6.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-redux": "^7.2.3",
-    "redux": "^4.0.5",
-    "redux-saga": "^1.1.3"
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@redux-devtools/extension": "^3.2.5",
+    "axios": "^1.5.1",
+    "dateformat": "^5.0.3",
+    "next": "13.5.4",
+    "next-redux-wrapper": "^8.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-redux": "^8.1.3",
+    "redux": "^4.2.1",
+    "redux-saga": "^1.2.3"
   },
   "devDependencies": {
-    "@types/dateformat": "^3.0.1",
-    "@types/node": "^12.12.21",
-    "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.1",
-    "@types/react-redux": "^7.1.16",
-    "redux-devtools-extension": "^2.13.9",
-    "typescript": "4.0"
+    "@types/dateformat": "^5.0.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-redux": "^7.1.27",
+    "typescript": "^5"
   },
   "license": "MIT"
 }

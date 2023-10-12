@@ -10,7 +10,7 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
         ..._req.body.record,
       });
       if (typeof result === 'number') {
-        return res.status(202).json({ id: result })
+        return res.status(202).json({ id: result });
       }
       res.status(200).json({ record: result });
     } else if (_req.method === 'PUT') {
@@ -20,7 +20,7 @@ const handler = (_req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).json({ record });
     }
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }
 };

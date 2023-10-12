@@ -8,7 +8,7 @@ import {
   createStore,
 } from 'redux';
 
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
 import createSagaMiddleware from 'redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import reducer from '../reducers';

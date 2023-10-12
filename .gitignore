@@ -37,3 +37,7 @@ yarn-error.log*
 !data/.keep
 
 armstrong.tar
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
