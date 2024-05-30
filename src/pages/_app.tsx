@@ -13,16 +13,12 @@ import createSagaMiddleware from 'redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import reducer from '../reducers';
 import axios from 'axios';
+import { Provider } from 'react-redux';
 
 interface AppProps {
   Component: any;
   store: Store;
 }
-
-const App = ({ Component }: AppProps) => {
-  axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_PATH;
-  return <Component />;
-};
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -39,4 +35,15 @@ const makeStore = (initialState: any) => {
 
 const wrapper = createWrapper(makeStore);
 
-export default wrapper.withRedux(App);
+const App = ({ Component, ...rest }: AppProps) => {
+  const { store, props } = wrapper.useWrappedStore(rest);
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_PATH;
+
+  return (
+    <Provider store={store}>
+      <Component {...props.pageProps} />
+    </Provider>
+  );
+};
+
+export default App;
