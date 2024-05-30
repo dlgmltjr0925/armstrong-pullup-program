@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { beep } from '../utils/beep';
 
 interface TimerProps {
   timeOut: Date;
@@ -17,6 +18,8 @@ const Timer = ({ timeOut, onEnd }: TimerProps) => {
 
   useEffect(() => {
     if (second === 0) onEnd();
+
+    if (second < 5) beep();
   }, [second]);
 
   useEffect(() => {
